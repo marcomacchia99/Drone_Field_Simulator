@@ -1,0 +1,12 @@
+- Per mandare richieste di collegamento bisogna collegarsi normalmente ad un nuovo socket (per ora abbiamo messo porta 8080)
+
+- Scrivere nel socket la posizione verso la quale si vuole andare, usando come struttura drone_position (guardate nel nostro codice)
+
+- Inviate solo la posizione nel caso in cui vogliate spostarvi lì, se non ci arriva nulla per noi siete rimasti fermi a dove eravate prima
+
+
+- Quando ci inviate la posizione facciamo i dovuti controlli, e scriviamo 1 nel socket se il movimento si può fare, 0 se non si può fare.
+Se il movimento è fattibile, assumiamo che il drone lo faccia senza alcuna altra interazione nel socket, e salviamo la nuova posizione
+
+- Se si scarica la batteria del drone, inviare una posizione fittizia con coordinata x MAX_X*2 e coordinata y MAX_Y*2
+(i due max sono le coordinate massime scritte dal prof, 40 e 80.), e noi memorizziamo che il vostro stato è idle
