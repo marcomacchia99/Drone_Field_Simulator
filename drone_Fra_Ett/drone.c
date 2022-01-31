@@ -140,7 +140,7 @@ int main()
     serv_addr.sin_port = htons(portno);
     serv_addr.sin_addr.s_addr = INADDR_ANY;
 
-    CHECK(connect(sockfd, &serv_addr, sizeof(serv_addr))); // Listens on the socket for connections.
+    CHECK(connect(sockfd, (struct sockaddr *)&serv_addr, sizeof(serv_addr))); // Listens on the socket for connections. (struct sockaddr *)&serv_addr
 
     printf("connected \n");
     fflush(stdout);
