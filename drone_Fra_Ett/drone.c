@@ -33,7 +33,17 @@ typedef struct drone_position_t
 } drone_position;
 
 /* Defining CHECK() tool. By using this method the code results ligher and cleaner */
-#define CHECK(X) ({int __val = (X); (__val == -1 ? ({fprintf(stderr,"ERROR (" __FILE__ ":%d) -- %s\n",__LINE__,strerror(errno)); exit(-1);-1;}) : __val); })
+#define CHECK(X) (                                                                                            \
+    {                                                                                                         \
+        int __val = (X);                                                                                      \
+        (__val == -1 ? (                                                                                      \
+                           {                                                                                  \
+                               fprintf(stderr, "ERROR (" __FILE__ ":%d) -- %s\n", __LINE__, strerror(errno)); \
+                               exit(-1);                                                                      \
+                               -1;                                                                            \
+                           })                                                                                 \
+                     : __val);                                                                                \
+    })
 
 /* GLOBAL VARIABLES */
 
@@ -48,7 +58,7 @@ int battery;
 float float_rand(float min, float max);
 // void logPrint ( char * string );
 void compute_next_position();
-void recharge(int newsockfd);
+void recharge(int sockfd);
 
 /* FUNCTIONS */
 float float_rand(float min, float max)
@@ -76,10 +86,10 @@ void compute_next_position()
     next_position.y = (int)round(actual_position.x + float_rand(-1, 1));
 }
 
-void recharge(int newsockfd)
+void recharge(int sockfd)
 {
 
-    CHECK(write(newsockfd, &landed, sizeof(drone_position))); // Dummy command.
+    CHECK(write(sockfd, &landed, sizeof(drone_position))); // Dummy command.
 
     sleep(5); // recharging time
 
@@ -98,7 +108,7 @@ int main()
     int ret; // this is the select() system call return value
     // char str[80];              // String to print on log file.
 
-    int sockfd, newsockfd;                  // File descriptors.
+    int sockfd;                             // File descriptors.
     int clilen, data;                       // Length of client address and variable for the read data.
     int portno = 8080;                      // Used port number.
     struct sockaddr_in serv_addr, cli_addr; // Address of the server and address of the client.
@@ -146,19 +156,19 @@ int main()
             printf("Low battery, landing for recharging. \n");
             fflush(stdout);
 
-            recharge(newsockfd);
+            recharge(sockfd);
         }
 
         compute_next_position();
         printf("next_x = %d, next_y =%d \n", next_position.x, next_position.y);
         fflush(stdout);
 
-        CHECK(write(newsockfd, &next_position, sizeof(drone_position))); // Writes the next position.
+        CHECK(write(sockfd, &next_position, sizeof(drone_position))); // Writes the next position.
 
         printf("written \n");
         fflush(stdout);
 
-        CHECK(read(newsockfd, &command, sizeof(int))); // Reads a feedback. ~ command = 0 if next_position is not allowed. ~ command = 1 if next posotion is allowed
+        CHECK(read(sockfd, &command, sizeof(int))); // Reads a feedback. ~ command = 0 if next_position is not allowed. ~ command = 1 if next posotion is allowed
 
         printf("read \n");
         fflush(stdout);
