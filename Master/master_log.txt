@@ -1,0 +1,56 @@
+starting master
+master - received portno 8080
+master - socket created
+master - socket bound
+starting master
+master - received portno 8080
+master - socket created
+master - socket bound
+starting master
+master - received portno 8080
+master - socket created
+master - socket bound
+master - drone 1 connected
+starting master
+master - received portno 8080
+master - socket created
+master - socket bound
+master - drone 1 connected
+starting master
+master - received portno 8080
+master - socket created
+master - socket bound
+master - drone 1 connected
+starting master
+master - received portno 8080
+master - socket created
+master - socket bound
+master - drone 1 connected
+starting master
+master - received portno 8080
+master - socket created
+master - socket bound
+master - drone 1 connected
+starting master
+master - received portno 8080
+master - socket created
+
+master - ERROR (master.c:66) -- Address already in use
+starting master
+master - received portno 8080
+master - socket created
+master - socket bound
+master - drone 1 connected
+starting master
+master - received portno 8080
+master - socket created
+master - socket bound
+starting master
+master - received portno 8080
+master - socket created
+master - socket bound
+master - drone 1 connected
+starting master
+master - received portno 8080
+master - socket created
+master - socket bound
