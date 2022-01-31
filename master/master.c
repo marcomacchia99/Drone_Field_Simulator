@@ -130,6 +130,21 @@ void check_new_connection()
     return;
 }
 
+int check_safe_movement(int drone, drone_position request_position)
+{
+    //check for map edges
+    if (request_position.x < 0 || request_position.x > MAX_X || request_position.y < 0 || request_position.y > MAX_Y)
+        return 0;
+
+    for (int i = 0; i < drones_no; i++)
+    {
+        //check if there can be a collision between others drones
+        if (positions[i].x == request_position.x && positions[i].y == request_position.y)
+            return 0;
+    }
+    return 1;
+}
+
 void check_move_request()
 {
     if (drones_no == 0)
@@ -164,10 +179,13 @@ void check_move_request()
                     drone_position request_position;
                     check(read(fd_drones[j], &request_position, sizeof(request_position)));
 
-                    //if MAX_X*2 and MAX_Y*2 is sent via position, the drone becomes in idle state
+
+                    //if MAX_X*2 and MAX_Y*2 is sent via position, the drone switches state (from active to idle state and vice versa)
                     if (request_position.x == MAX_X * 2 && request_position.y == MAX_Y * 2)
                     {
-                        drones_status[j] = 0;
+                        //switch position usinx xor operator (1^1=0 and 0^1 = 1)
+                        //status 1 means active, status 0 means idle. (Initial) status -1 means drone is not connected
+                        drones_status[j] ^= 1;
                     }
                     else
                     {
@@ -191,20 +209,7 @@ void check_move_request()
     return;
 }
 
-int check_safe_movement(int drone, drone_position request_position)
-{
-    //check for map edges
-    if (request_position.x < 0 || request_position.x > MAX_X || request_position.y < 0 || request_position.y > MAX_Y)
-        return 0;
 
-    for (int i = 0; i < drones_no; i++)
-    {
-        //check if there can be a collision between others drones
-        if (positions[i].x == request_position.x && positions[i].y == request_position.y)
-            return 0;
-    }
-    return 1;
-}
 
 void update_map()
 {
