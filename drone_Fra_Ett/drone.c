@@ -1,3 +1,5 @@
+// Compile with: gcc drone.c -lm -o drone
+
 /* LIBRARIES */
 #include <stdio.h>
 #include <stdlib.h>
