@@ -53,12 +53,16 @@ drone_position actual_position; // actual drone position
 drone_position next_position;   // next drone position
 drone_position landed;          // position for idle status
 int battery;
+bool map[40][80] = {};
+int step = 1;
+bool direction = true;
 
 /* FUNCTIONS HEADERS */
 float float_rand(float min, float max);
 // void logPrint ( char * string );
 void compute_next_position();
 void recharge(int sockfd);
+void loading_bar(int percent, int buf_size);
 
 /* FUNCTIONS */
 float float_rand(float min, float max)
@@ -81,9 +85,39 @@ float float_rand(float min, float max)
 void compute_next_position()
 {
     /* Function to compute a new position. A better coverage algorithm will be implemented */
+    int cycles = 0;
+    do {
+        if ( command == 0 )
+            step = -step;
+        if ( direction ) {
+            next_position.x = actual_position.x + step;
+            next_position.y = (int)round(actual_position.y + float_rand(-0.8, 0.8));
+        } else {
+            next_position.y = actual_position.y + step;
+            next_position.x = (int)round(actual_position.x + float_rand(-0.8, 0.8));
+        }
+        
+        if ( next_position.x > MAX_X - 1 ) {
+            step = -step;
+            next_position.x = MAX_X - 1;
+        }
 
-    next_position.x = (int)round(actual_position.x + float_rand(-1, 1));
-    next_position.y = (int)round(actual_position.x + float_rand(-1, 1));
+        if ( next_position.x < 0 ) {
+            step = -step;
+            next_position.x = 0;
+        }
+
+        if ( next_position.y > MAX_Y - 1 ) {
+            next_position.y = MAX_Y -1 ;
+            step = -step;
+        }
+
+        if ( next_position.y < 0 ) {
+            next_position.y = 0;
+            step = -step;
+        }
+        cycles++;
+    } while (map[next_position.y][next_position.x] == 1 || cycles == 10);
 }
 
 void recharge(int sockfd)
@@ -91,10 +125,35 @@ void recharge(int sockfd)
 
     CHECK(write(sockfd, &landed, sizeof(drone_position))); // Dummy command.
 
-    sleep(5); // recharging time
+    for ( int i = 1; i <= MAX_CHARGE; i++ ) {
+        usleep(50000);
+        loading_bar(i, MAX_CHARGE);
+    }
 
     battery = MAX_CHARGE;
+    direction = !direction;
     printf("Battery fully charged. \n");
+}
+
+void loading_bar(int percent, int buf_size)
+{
+
+    /*This is a simple graphical feature that we implemented. It is a loading bar that graphically
+        rapresents the progress percentage of the data transmission.  */
+
+    const int PROG = 30;
+    int num_chars = (percent / (buf_size / 100)) * PROG / 100;
+    printf("\r[");
+    for (int i = 0; i <= num_chars; i++)
+    {
+        printf("#");
+    }
+    for (int i = 0; i < PROG - num_chars - 1; i++)
+    {
+        printf(" ");
+    }
+    printf("] %d %% BATTERY", percent / (buf_size / 100));
+    fflush(stdout);
 }
 
 /* MAIN */
@@ -114,7 +173,7 @@ int main()
     struct sockaddr_in serv_addr, cli_addr; // Address of the server and address of the client.
 
     // Initial Position
-    actual_position.x = 10;
+    actual_position.x = 20;
     actual_position.y = 10;
 
     // Dummy Position
@@ -186,6 +245,14 @@ int main()
             printf("let's move \n");
             fflush(stdout);
             actual_position = next_position;
+            map[actual_position.y][actual_position.x] = true;
+        }
+
+        for (int i = 0; i < 40; i++ ) {
+            for ( int j = 0; j < 80; j++ ) {
+                printf("%d", map[i][j]);
+            }
+            printf("\n");
         }
 
         // sprintf(str, "motor_x   : x_position = %f\n", x_position);
@@ -193,9 +260,10 @@ int main()
 
         // Battery decreases
         battery--;
+        loading_bar( battery, MAX_CHARGE );
 
         // sleep for 1 second
-        sleep(1);
+        usleep(100000);
 
     } // End of the while cycle.
 
