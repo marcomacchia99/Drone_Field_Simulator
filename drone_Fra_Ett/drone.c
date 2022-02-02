@@ -14,6 +14,7 @@
 #include <netdb.h>
 #include <sys/socket.h>
 #include <math.h>
+#include <ncurses.h>
 
 #define MAX_X 80 // max x value
 #define MAX_Y 40 // max y value
@@ -51,6 +52,19 @@ typedef struct drone_position_t
                      : __val);                                                                                \
     })
 
+void signal_handler( int sig ) {
+    /* Function to handle the SIGWINCH signal. The OS send this signal to the process when the size of
+    the terminal changes. */
+
+    if (sig == SIGWINCH) {
+    /* If the size of the terminal changes, clear and restart the grafic interface. */
+        endwin();
+        initscr(); // Init the console screen.
+        refresh();
+        clear();
+    }
+}
+
 /* GLOBAL VARIABLES */
 
 int command = 0; // Command received.
@@ -62,6 +76,7 @@ int battery;                    // this variable takes into account the battry s
 bool map[40][80] = {};          // matrix that represent the maze. '1' stands for a visited position, '0' not visited.
 int step = 1;                   // drone movement step
 bool direction = true;          // toggle for exploring direction
+char str[50];
 
 /* FUNCTIONS HEADERS */
 float float_rand(float min, float max);
@@ -69,6 +84,7 @@ float float_rand(float min, float max);
 void compute_next_position();
 void recharge(int sockfd);
 void loading_bar(int percent, int buf_size);
+void setup_colors();
 
 /* FUNCTIONS */
 float float_rand(float min, float max)
@@ -141,6 +157,11 @@ void recharge(int sockfd)
 
     CHECK(write(sockfd, &landed, sizeof(drone_position))); // dummy command for idle status
 
+    attron(COLOR_PAIR(1));
+    mvaddstr(40, 50, "Recharging...");
+    attroff(COLOR_PAIR(1));
+    refresh();
+
     for (int i = 1; i <= MAX_CHARGE; i++)
     {
         usleep(50000);
@@ -149,7 +170,8 @@ void recharge(int sockfd)
 
     battery = MAX_CHARGE;
     direction = !direction; // once the battery is fully charged, change exploration direction
-    printf(BHGRN "\nBattery fully charged. \n" RESET);
+    mvaddstr(40, 50, "               ");
+    refresh();
 }
 
 void loading_bar(int percent, int buf_size)
@@ -160,17 +182,38 @@ void loading_bar(int percent, int buf_size)
 
     const int PROG = 30;
     int num_chars = (percent / (buf_size / 100)) * PROG / 100;
-    printf(BHWHT "\r[");
-    for (int i = 0; i <= num_chars; i++)
+
+    attron(COLOR_PAIR(4));
+    mvaddch(40, 0, '[');
+    attroff(COLOR_PAIR(4));
+
+    int i;
+    for (i = 0; i <= num_chars; i++)
     {
-        printf(BHYEL "#" RESET);
+        attron(COLOR_PAIR(3));
+        mvaddch(40, i+1, '#');
+        attron(COLOR_PAIR(3));
     }
-    for (int i = 0; i < PROG - num_chars - 1; i++)
+
+    for (int j = 0; j < PROG - num_chars - 1; j++)
     {
-        printf(" ");
+        mvaddch(40, i+j+1, ' ');
     }
-    printf(BHWHT "] %d %% " BHYEL "BATTERY\n" RESET, percent / (buf_size / 100));
-    fflush(stdout);
+
+    attron(COLOR_PAIR(4));
+    sprintf(str,"] %d %% BATTERY  ", percent / (buf_size / 100));
+    mvaddstr(40, 31, str);
+    attroff(COLOR_PAIR(4));
+
+    refresh();
+}
+
+void setup_colors() {
+    start_color();
+    init_pair(1, COLOR_GREEN, COLOR_BLACK);
+    init_pair(2, COLOR_RED, COLOR_BLACK);
+    init_pair(3, COLOR_YELLOW, COLOR_BLACK);
+    init_pair(4, COLOR_WHITE, COLOR_BLACK);
 }
 
 /* MAIN */
@@ -187,8 +230,8 @@ int main()
     struct sockaddr_in serv_addr, cli_addr; // Address of the server and address of the client.
 
     // Initial Position
-    actual_position.x = 20;
-    actual_position.y = 20;
+    actual_position.x = (int)round(float_rand(0, MAX_X-1));
+    actual_position.y = (int)round(float_rand(0, MAX_Y-1));
 
     // Dummy Position
     landed.x = MAX_X * 2;
@@ -199,6 +242,15 @@ int main()
 
     // log_file = fopen("../log_file/Log.txt", "a"); // Open the log file.
     // logPrint("motor_x   : Motor x started.\n");
+
+    /* Signals that the process can receive. */
+    struct sigaction sa;
+    memset(&sa, 0, sizeof(sa));
+    sa.sa_handler = &signal_handler;
+    sa.sa_flags = SA_RESTART;
+    
+    /* sigaction for SIGWINCH */
+    CHECK(sigaction(SIGWINCH,&sa,NULL));
 
     /* Opens socket */
 
@@ -212,6 +264,15 @@ int main()
 
     CHECK(connect(sockfd, (struct sockaddr *)&serv_addr, sizeof(serv_addr))); // Listens on the socket for connections. (struct sockaddr *)&serv_addr
 
+    /* Screen setup. */
+    initscr(); // Init the console screen.
+    refresh();
+    clear();
+
+    if (has_colors()) {
+        setup_colors();
+    }
+
     while (1)
     {
 
@@ -220,39 +281,45 @@ int main()
 
         if (battery == 0)
         { // Low battery
-            printf(BHRED "\n\nLow battery, landing for recharging. \n\n" RESET);
-            fflush(stdout);
+            attron(COLOR_PAIR(2));
+            mvaddstr(43, 0, "Low battery, landing for recharging.");
+            attroff(COLOR_PAIR(2));
+            refresh();
 
             recharge(sockfd); // send dummy position
+
+            mvaddstr(43, 0, "                                    ");
+            refresh();
         }
 
         compute_next_position(); // looks for a new position
 
-        printf(BHYEL "Next X = %d, Next Y = %d \n" RESET, next_position.x, next_position.y);
-        fflush(stdout);
+        sprintf(str, "Next X = %d, Next Y = %d \n", next_position.x, next_position.y);
+        mvaddstr(42, 0, str);
+        refresh();
 
         CHECK(write(sockfd, &next_position, sizeof(drone_position))); // Writes the next position.
 
-        printf(BHGRN "Data correctly written into the socket \n" RESET);
-        fflush(stdout);
+        mvaddstr(44, 0, "Data correctly written into the socket");
+        refresh();
 
         CHECK(read(sockfd, &command, sizeof(int))); // Reads a feedback. ~ command = 0 if next_position is not allowed. ~ command = 1 if next posotion is allowed
 
-        printf(BHGRN "Feedback correctly read from master process \n" RESET);
-        fflush(stdout);
+        mvaddstr(45, 0, "Feedback correctly read from master process \n" RESET);
+        refresh();
 
         // Not allowed
         if (command == 0)
         {
-            printf(BHRED "Drone stopped, position not allowed \n" RESET);
-            fflush(stdout);
+            mvaddstr(47, 0, "Drone stopped, position not allowed");
+            refresh();
         }
 
         // Allowed
         if (command == 1)
         {
-            printf(BHGRN "Position allowed, drone is moving \n" RESET);
-            fflush(stdout);
+            mvaddstr(46, 0, "Position allowed, drone is moving   ");
+            refresh();
             actual_position = next_position;
             map[actual_position.y][actual_position.x] = true;
         }
@@ -263,15 +330,19 @@ int main()
             {
                 if (map[i][j] == 0) // not visited positions
                 {
-                    printf(BHWHT "%d" RESET, map[i][j]);
+                    attron(COLOR_PAIR(1));
+                    mvaddch(i, j, '0');
+                    attroff(COLOR_PAIR(1));
                 }
                 else // visited positions
                 {
-                    printf(BHRED "%d" RESET, map[i][j]);
+                    attron(COLOR_PAIR(2));
+                    mvaddch(i, j, '1');
+                    attroff(COLOR_PAIR(2));
                 }
             }
-            printf("\n");
         }
+        refresh();
 
         // sprintf(str, "motor_x   : x_position = %f\n", x_position);
         // logPrint(str);
