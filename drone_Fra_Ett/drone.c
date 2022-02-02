@@ -1,4 +1,4 @@
-// Compile with: gcc drone.c -lm -o drone
+// Compile with: gcc drone.c -lm -lncurses -o drone
 
 /* LIBRARIES */
 #include <stdio.h>
@@ -16,20 +16,32 @@
 #include <math.h>
 #include <ncurses.h>
 
-#define MAX_X 80 // max x value
-#define MAX_Y 40 // max y value
-#define MAX_CHARGE 100
+#define MAX_X 80          // max x value
+#define MAX_Y 40          // max y value
+#define MAX_CHARGE 100    // max battery level
 
-/* COLORS */
-#define RESET "\033[0m"
-#define BHBLK "\e[1;90m"
-#define BHRED "\e[1;91m"
-#define BHGRN "\e[1;92m"
-#define BHYEL "\e[1;93m"
-#define BHBLU "\e[1;94m"
-#define BHMAG "\e[1;95m"
-#define BHCYN "\e[1;96m"
-#define BHWHT "\e[1;97m"
+/* FUNCTIONS HEADERS */
+float float_rand(float min, float max);
+void logPrint ( char * string );
+void compute_next_position();
+void recharge(int sockfd);
+void loading_bar(int percent, int buf_size);
+void setup_colors();
+void setup_map();
+
+void signal_handler( int sig ) {
+    /* Function to handle the SIGWINCH signal. The OS send this signal to the process when the size of
+    the terminal changes. */
+
+    if (sig == SIGWINCH) {
+    /* If the size of the terminal changes, clear and restart the grafic interface. */
+        endwin();
+        initscr(); // Init the console screen.
+        clear();
+        setup_map();
+        refresh();
+    }
+}
 
 typedef struct drone_position_t
 {
@@ -52,39 +64,19 @@ typedef struct drone_position_t
                      : __val);                                                                                \
     })
 
-void signal_handler( int sig ) {
-    /* Function to handle the SIGWINCH signal. The OS send this signal to the process when the size of
-    the terminal changes. */
-
-    if (sig == SIGWINCH) {
-    /* If the size of the terminal changes, clear and restart the grafic interface. */
-        endwin();
-        initscr(); // Init the console screen.
-        refresh();
-        clear();
-    }
-}
-
 /* GLOBAL VARIABLES */
 
-int command = 0; // Command received.
-// FILE *log_file;              // log file.
-drone_position actual_position; // actual drone position
-drone_position next_position;   // next drone position
-drone_position landed;          // position for idle status
-int battery;                    // this variable takes into account the battry status
+int command = 0;                // Command received.
+FILE *log_file;                 // log file.
+int battery = MAX_CHARGE;       // this variable takes into account the battry status
 bool map[40][80] = {};          // matrix that represent the maze. '1' stands for a visited position, '0' not visited.
 int step = 1;                   // drone movement step
 bool direction = true;          // toggle for exploring direction
-char str[50];
+char str[50];                   // string buffer
 
-/* FUNCTIONS HEADERS */
-float float_rand(float min, float max);
-// void logPrint ( char * string );
-void compute_next_position();
-void recharge(int sockfd);
-void loading_bar(int percent, int buf_size);
-void setup_colors();
+drone_position next_position;                               // next drone position
+drone_position landed = {.x = MAX_X * 2, .y = MAX_Y * 2};   // position for idle status
+drone_position actual_position = {.x = 10, .y = 10};        // actual drone position
 
 /* FUNCTIONS */
 float float_rand(float min, float max)
@@ -96,14 +88,13 @@ float float_rand(float min, float max)
     return min + scale * (max - min); // [min, max]
 }
 
-// void logPrint ( char * string ) {
-//     /* Function to print on log file adding time stamps. */
+void logPrint ( char * string ) {
+    /* Function to print on log file adding time stamps. */
+    time_t ltime = time(NULL);
+    fprintf( log_file, "%.19s: %s", ctime( &ltime ), string );
+    fflush(log_file);
+}
 
-//     time_t ltime = time(NULL);
-//     fprintf( log_file, "%.19s: %s", ctime( &ltime ), string );
-//     fflush(log_file);
-// }
-int test = 0;
 void compute_next_position()
 {
     /* Function to compute a new position. A better coverage algorithm will be implemented */
@@ -148,12 +139,25 @@ void compute_next_position()
             next_position.y = 0; // change step direction
             step = -step;
         }
-        cycles++;                                                        // increment cycles
+        cycles++;                // increment cycles
+
     } while (map[next_position.y][next_position.x] == 1 && cycles < 10); // if an allowed positon is not found for more than 10 times, stop the while cycle
+
+    sprintf(str, "Next X = %d, Next Y = %d \n", next_position.x, next_position.y);
+    mvaddstr(42, 0, str);
+    refresh();
+
+    logPrint(str);
+
 }
 
 void recharge(int sockfd)
 {
+    attron(COLOR_PAIR(2));
+    mvaddstr(43, 0, "Low battery, landing for recharging.");
+    attroff(COLOR_PAIR(2));
+
+    logPrint("Low battery, landing for recharging.\n");
 
     CHECK(write(sockfd, &landed, sizeof(drone_position))); // dummy command for idle status
 
@@ -170,7 +174,11 @@ void recharge(int sockfd)
 
     battery = MAX_CHARGE;
     direction = !direction; // once the battery is fully charged, change exploration direction
+
+    logPrint("Battery fully recharged.\n");
+
     mvaddstr(40, 50, "               ");
+    mvaddstr(43, 0, "                                    ");
     refresh();
 }
 
@@ -208,7 +216,14 @@ void loading_bar(int percent, int buf_size)
     refresh();
 }
 
-void setup_colors() {
+void setup_colors() { // colors using ncurses library
+
+    if (!has_colors()) {
+        endwin();
+        printf("This terminal is not allowed to print colors.\n");
+        exit(1);
+    }
+
     start_color();
     init_pair(1, COLOR_GREEN, COLOR_BLACK);
     init_pair(2, COLOR_RED, COLOR_BLACK);
@@ -216,32 +231,36 @@ void setup_colors() {
     init_pair(4, COLOR_WHITE, COLOR_BLACK);
 }
 
-/* MAIN */
+void setup_map() {
+    for (int i = 0; i < 40; i++)
+    {
+        for (int j = 0; j < 80; j++)
+        {
+            if(map[i][j] == false) {
+                attron(COLOR_PAIR(1));
+                mvaddch(i, j, '0');
+                attroff(COLOR_PAIR(1));
+            } else {
+                attron(COLOR_PAIR(2));
+                mvaddch(i, j, '1');
+                attroff(COLOR_PAIR(2));
+            }
+        }
+    }
+}
 
+/* MAIN */
 int main()
 {
-
-    int ret; // this is the select() system call return value
-    // char str[80];              // String to print on log file.
-
     int sockfd;                             // File descriptors.
-    int clilen, data;                       // Length of client address and variable for the read data.
     int portno = 8080;                      // Used port number.
-    struct sockaddr_in serv_addr, cli_addr; // Address of the server and address of the client.
+    struct sockaddr_in serv_addr;           // Address of the server and address of the client.
 
-    // Initial Position
-    actual_position.x = (int)round(float_rand(0, MAX_X-1));
-    actual_position.y = (int)round(float_rand(0, MAX_Y-1));
-
-    // Dummy Position
-    landed.x = MAX_X * 2;
-    landed.y = MAX_Y * 2;
-
-    // Battery fully charged
-    battery = MAX_CHARGE;
-
-    // log_file = fopen("../log_file/Log.txt", "a"); // Open the log file.
-    // logPrint("motor_x   : Motor x started.\n");
+    /* Open and write on the log file. */
+    log_file = fopen("./log_file.txt", "w");
+    logPrint("Create log file.\n");
+    sprintf(str, "My PID is: %d \n", getpid());
+    logPrint(str);
 
     /* Signals that the process can receive. */
     struct sigaction sa;
@@ -253,7 +272,6 @@ int main()
     CHECK(sigaction(SIGWINCH,&sa,NULL));
 
     /* Opens socket */
-
     sockfd = CHECK(socket(AF_INET, SOCK_STREAM, 0)); // Creates a new socket.
 
     /* Initialize the serv_addr struct. */
@@ -264,88 +282,67 @@ int main()
 
     CHECK(connect(sockfd, (struct sockaddr *)&serv_addr, sizeof(serv_addr))); // Listens on the socket for connections. (struct sockaddr *)&serv_addr
 
+    logPrint("Connection succesfully established.\n");
+
     /* Screen setup. */
     initscr(); // Init the console screen.
     refresh();
     clear();
-
-    if (has_colors()) {
-        setup_colors();
-    }
+    setup_colors();
+    setup_map();
+    
 
     while (1)
     {
-
-        // sprintf(str, "motor_x   : command received = %d.\n", command);
-        // logPrint(str);
-
-        if (battery == 0)
-        { // Low battery
-            attron(COLOR_PAIR(2));
-            mvaddstr(43, 0, "Low battery, landing for recharging.");
-            attroff(COLOR_PAIR(2));
-            refresh();
-
-            recharge(sockfd); // send dummy position
-
-            mvaddstr(43, 0, "                                    ");
-            refresh();
-        }
+        if (battery == 0) //Low battery
+            recharge(sockfd);
 
         compute_next_position(); // looks for a new position
-
-        sprintf(str, "Next X = %d, Next Y = %d \n", next_position.x, next_position.y);
-        mvaddstr(42, 0, str);
-        refresh();
 
         CHECK(write(sockfd, &next_position, sizeof(drone_position))); // Writes the next position.
 
         mvaddstr(44, 0, "Data correctly written into the socket");
         refresh();
 
+        logPrint("Data correctly written into the socket.\n");
+
         CHECK(read(sockfd, &command, sizeof(int))); // Reads a feedback. ~ command = 0 if next_position is not allowed. ~ command = 1 if next posotion is allowed
 
-        mvaddstr(45, 0, "Feedback correctly read from master process \n" RESET);
+        mvaddstr(45, 0, "Feedback correctly read from master process");
         refresh();
+
+        logPrint("Feedback correctly read from master process. \n");
 
         // Not allowed
         if (command == 0)
         {
-            mvaddstr(47, 0, "Drone stopped, position not allowed");
+            attron(COLOR_PAIR(2));
+            mvaddstr(46, 0, "Drone stopped, position not allowed");
+            attroff(COLOR_PAIR(2));
             refresh();
+
+            logPrint("Drone stopped, position not allowed.\n");
         }
 
         // Allowed
         if (command == 1)
         {
+            attron(COLOR_PAIR(1));
             mvaddstr(46, 0, "Position allowed, drone is moving   ");
+            attroff(COLOR_PAIR(1));
             refresh();
+
+            logPrint("Position allowed, drone is moving.\n");
+
             actual_position = next_position;
             map[actual_position.y][actual_position.x] = true;
+            attron(COLOR_PAIR(2));
+            mvaddch(actual_position.y, actual_position.x, '1');
+            attroff(COLOR_PAIR(2));
         }
 
-        for (int i = 0; i < 40; i++)
-        {
-            for (int j = 0; j < 80; j++)
-            {
-                if (map[i][j] == 0) // not visited positions
-                {
-                    attron(COLOR_PAIR(1));
-                    mvaddch(i, j, '0');
-                    attroff(COLOR_PAIR(1));
-                }
-                else // visited positions
-                {
-                    attron(COLOR_PAIR(2));
-                    mvaddch(i, j, '1');
-                    attroff(COLOR_PAIR(2));
-                }
-            }
-        }
+        
         refresh();
-
-        // sprintf(str, "motor_x   : x_position = %f\n", x_position);
-        // logPrint(str);
 
         // Battery decreases
         battery--;
@@ -356,7 +353,7 @@ int main()
 
     } // End of the while cycle.
 
-    // fclose(log_file); // Close log file.
+    fclose(log_file); // Close log file.
 
     return 0;
 }
