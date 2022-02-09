@@ -16,25 +16,27 @@
 #include <math.h>
 #include <ncurses.h>
 
-#define MAX_X 80          // max x value
-#define MAX_Y 40          // max y value
-#define MAX_CHARGE 100    // max battery level
+#define MAX_X 80       // max x value
+#define MAX_Y 40       // max y value
+#define MAX_CHARGE 100 // max battery level
 
 /* FUNCTIONS HEADERS */
 float float_rand(float min, float max);
-void logPrint ( char * string );
+void logPrint(char *string);
 void compute_next_position();
 void recharge(int sockfd);
 void loading_bar(int percent, int buf_size);
 void setup_colors();
 void setup_map();
 
-void signal_handler( int sig ) {
+void signal_handler(int sig)
+{
     /* Function to handle the SIGWINCH signal. The OS send this signal to the process when the size of
     the terminal changes. */
 
-    if (sig == SIGWINCH) {
-    /* If the size of the terminal changes, clear and restart the grafic interface. */
+    if (sig == SIGWINCH)
+    {
+        /* If the size of the terminal changes, clear and restart the grafic interface. */
         endwin();
         initscr(); // Init the console screen.
         clear();
@@ -66,17 +68,17 @@ typedef struct drone_position_t
 
 /* GLOBAL VARIABLES */
 
-int command = 0;                // Command received.
-FILE *log_file;                 // log file.
-int battery = MAX_CHARGE;       // this variable takes into account the battry status
-bool map[40][80] = {};          // matrix that represent the maze. '1' stands for a visited position, '0' not visited.
-int step = 1;                   // drone movement step
-bool direction = true;          // toggle for exploring direction
-char str[50];                   // string buffer
+int command = 0;          // Command received.
+FILE *log_file;           // log file.
+int battery = MAX_CHARGE; // this variable takes into account the battry status
+bool map[40][80] = {};    // matrix that represent the maze. '1' stands for a visited position, '0' not visited.
+int step = 1;             // drone movement step
+bool direction = true;    // toggle for exploring direction
+char str[50];             // string buffer
 
-drone_position next_position;                               // next drone position
-drone_position landed = {.x = MAX_X * 2, .y = MAX_Y * 2};   // position for idle status
-drone_position actual_position = {.x = 10, .y = 10};        // actual drone position
+drone_position next_position;                             // next drone position
+drone_position landed = {.x = MAX_X * 2, .y = MAX_Y * 2}; // position for idle status
+drone_position actual_position = {.x = 10, .y = 10};      // actual drone position
 
 /* FUNCTIONS */
 float float_rand(float min, float max)
@@ -88,10 +90,11 @@ float float_rand(float min, float max)
     return min + scale * (max - min); // [min, max]
 }
 
-void logPrint ( char * string ) {
+void logPrint(char *string)
+{
     /* Function to print on log file adding time stamps. */
     time_t ltime = time(NULL);
-    fprintf( log_file, "%.19s: %s", ctime( &ltime ), string );
+    fprintf(log_file, "%.19s: %s", ctime(&ltime), string);
     fflush(log_file);
 }
 
@@ -139,7 +142,7 @@ void compute_next_position()
             next_position.y = 0; // change step direction
             step = -step;
         }
-        cycles++;                // increment cycles
+        cycles++; // increment cycles
 
     } while (map[next_position.y][next_position.x] == 1 && cycles < 10); // if an allowed positon is not found for more than 10 times, stop the while cycle
 
@@ -148,7 +151,6 @@ void compute_next_position()
     refresh();
 
     logPrint(str);
-
 }
 
 void recharge(int sockfd)
@@ -199,26 +201,28 @@ void loading_bar(int percent, int buf_size)
     for (i = 0; i <= num_chars; i++)
     {
         attron(COLOR_PAIR(3));
-        mvaddch(40, i+1, '#');
+        mvaddch(40, i + 1, '#');
         attron(COLOR_PAIR(3));
     }
 
     for (int j = 0; j < PROG - num_chars - 1; j++)
     {
-        mvaddch(40, i+j+1, ' ');
+        mvaddch(40, i + j + 1, ' ');
     }
 
     attron(COLOR_PAIR(4));
-    sprintf(str,"] %d %% BATTERY  ", percent / (buf_size / 100));
+    sprintf(str, "] %d %% BATTERY  ", percent / (buf_size / 100));
     mvaddstr(40, 31, str);
     attroff(COLOR_PAIR(4));
 
     refresh();
 }
 
-void setup_colors() { // colors using ncurses library
+void setup_colors()
+{ // colors using ncurses library
 
-    if (!has_colors()) {
+    if (!has_colors())
+    {
         endwin();
         printf("This terminal is not allowed to print colors.\n");
         exit(1);
@@ -231,16 +235,20 @@ void setup_colors() { // colors using ncurses library
     init_pair(4, COLOR_WHITE, COLOR_BLACK);
 }
 
-void setup_map() {
+void setup_map()
+{
     for (int i = 0; i < 40; i++)
     {
         for (int j = 0; j < 80; j++)
         {
-            if(map[i][j] == false) {
+            if (map[i][j] == false)
+            {
                 attron(COLOR_PAIR(1));
                 mvaddch(i, j, '0');
                 attroff(COLOR_PAIR(1));
-            } else {
+            }
+            else
+            {
                 attron(COLOR_PAIR(2));
                 mvaddch(i, j, '1');
                 attroff(COLOR_PAIR(2));
@@ -252,9 +260,10 @@ void setup_map() {
 /* MAIN */
 int main()
 {
-    int sockfd;                             // File descriptors.
-    int portno = 8080;                      // Used port number.
-    struct sockaddr_in serv_addr;           // Address of the server and address of the client.
+    int sockfd;                   // File descriptors.
+    int portno = 8080;            // Used port number.
+    struct sockaddr_in serv_addr; // Address of the server and address of the client.
+    srand(time(NULL));            // Randomize
 
     /* Open and write on the log file. */
     log_file = fopen("./log_file.txt", "w");
@@ -267,9 +276,9 @@ int main()
     memset(&sa, 0, sizeof(sa));
     sa.sa_handler = &signal_handler;
     sa.sa_flags = SA_RESTART;
-    
+
     /* sigaction for SIGWINCH */
-    CHECK(sigaction(SIGWINCH,&sa,NULL));
+    CHECK(sigaction(SIGWINCH, &sa, NULL));
 
     /* Opens socket */
     sockfd = CHECK(socket(AF_INET, SOCK_STREAM, 0)); // Creates a new socket.
@@ -290,11 +299,10 @@ int main()
     clear();
     setup_colors();
     setup_map();
-    
 
     while (1)
     {
-        if (battery == 0) //Low battery
+        if (battery == 0) // Low battery
             recharge(sockfd);
 
         compute_next_position(); // looks for a new position
@@ -341,7 +349,6 @@ int main()
             attroff(COLOR_PAIR(2));
         }
 
-        
         refresh();
 
         // Battery decreases
