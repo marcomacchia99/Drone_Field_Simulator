@@ -28,6 +28,7 @@ void recharge(int sockfd);
 void loading_bar(int percent, int buf_size);
 void setup_colors();
 void setup_map();
+int change_velocity(int dt);
 
 void signal_handler(int sig)
 {
@@ -55,16 +56,16 @@ typedef struct drone_position_t
 
 /* Defining CHECK() tool. By using this method the code results ligher and cleaner */
 #define CHECK(X) (                                                                                            \
-    {                                                                                                         \
-        int __val = (X);                                                                                      \
-        (__val == -1 ? (                                                                                      \
-                           {                                                                                  \
-                               fprintf(stderr, "ERROR (" __FILE__ ":%d) -- %s\n", __LINE__, strerror(errno)); \
-                               exit(-1);                                                                      \
-                               -1;                                                                            \
-                           })                                                                                 \
-                     : __val);                                                                                \
-    })
+{                                                                                                         \
+    int __val = (X);                                                                                      \
+    (__val == -1 ? (                                                                                      \
+     {                                                                                  \
+         fprintf(stderr, "ERROR (" __FILE__ ":%d) -- %s\n", __LINE__, strerror(errno)); \
+         exit(-1);                                                                      \
+         -1;                                                                            \
+     })                                                                                 \
+    : __val);                                                                                \
+})
 
 /* GLOBAL VARIABLES */
 
@@ -75,6 +76,7 @@ bool map[40][80] = {};    // matrix that represent the maze. '1' stands for a vi
 int step = 1;             // drone movement step
 bool direction = true;    // toggle for exploring direction
 char str[50];             // string buffer
+int dt = 100000;          // time step
 
 drone_position next_position;                             // next drone position
 drone_position landed = {.x = MAX_X * 2, .y = MAX_Y * 2}; // position for idle status
@@ -257,6 +259,38 @@ void setup_map()
     }
 }
 
+
+int change_velocity(int dt){
+
+    char input;
+    struct timeval tv = {.tv_sec = 0, .tv_usec = 0};
+    fd_set rset;
+    FD_ZERO(&rset);
+    FD_SET(STDIN_FILENO, &rset);
+    int ret = CHECK(select(FD_SETSIZE, &rset, NULL, NULL, &tv));
+
+    if (FD_ISSET(STDIN_FILENO, &rset) != 0) { // There is something to read!
+        command = getchar(); // Update the command.
+    }
+    if (input == 49){
+        dt = 100000;
+    }
+    else if (input == 50){
+        dt = 70000;
+    }
+    else if (input == 51){
+        dt = 40000;
+    }
+    else if (input == 52){
+        logPrint("Exit command received!");
+        logPrint("Killing the process...");
+        kill(getpid(), SIGKILL);
+    }
+
+    return dt;
+}
+
+
 /* MAIN */
 int main()
 {
@@ -267,8 +301,8 @@ int main()
 
     /* Open and write on the log file. */
     log_file = fopen("./log_file.txt", "w");
-    logPrint("Create log file.\n");
-    sprintf(str, "My PID is: %d \n", getpid());
+    logPrint("Log file successfully created.\n");
+    sprintf(str, "Drone 007 PID is: %d \n", getpid());
     logPrint(str);
 
     /* Signals that the process can receive. */
@@ -291,7 +325,7 @@ int main()
 
     CHECK(connect(sockfd, (struct sockaddr *)&serv_addr, sizeof(serv_addr))); // Listens on the socket for connections. (struct sockaddr *)&serv_addr
 
-    logPrint("Connection succesfully established.\n");
+    logPrint("Connection successfully established.\n");
 
     /* Screen setup. */
     initscr(); // Init the console screen.
@@ -299,6 +333,7 @@ int main()
     clear();
     setup_colors();
     setup_map();
+
 
     while (1)
     {
@@ -349,14 +384,25 @@ int main()
             attroff(COLOR_PAIR(2));
         }
 
+        attron(COLOR_PAIR(3));
+        mvaddstr(48, 0, "Select one of the following commands for changing the drone's velocity:");
+        mvaddstr(49, 0, "[1] DEFAULT");
+        mvaddstr(50, 0, "[2] FAST");
+        mvaddstr(51, 0, "[3] VERY FAST");
+        attroff(COLOR_PAIR(3));
+        attron(COLOR_PAIR(2));
+        mvaddstr(52, 0, "[4] Quit the application");
+        attroff(COLOR_PAIR(2));
+
         refresh();
 
         // Battery decreases
         battery--;
         loading_bar(battery, MAX_CHARGE); // graphical tool that represents a decharging bar
 
-        // sleep for 0.1 second
-        usleep(100000);
+        dt = change_velocity(dt); // change the dt time quantum depending on the slected drone velocity
+        
+        usleep(dt); // sleep for dt second
 
     } // End of the while cycle.
 
