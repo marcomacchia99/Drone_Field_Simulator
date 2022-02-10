@@ -11,17 +11,24 @@
 #include <sys/socket.h>
 #include <netinet/in.h>
 
-#define MAX_DRONES 4 //max drones number
-#define MAX_X 80     //max x value
-#define MAX_Y 40     //max y value
+#define MAX_DRONES 4 // max drones number
+#define MAX_X 80     // max x value
+#define MAX_Y 40     // max y value
 
 #define RED '\033[1;31m'
 #define GREEN '\033[1;32m'
 #define BLUE '\033[1;34m'
 #define NC '\033[0m'
 
+#define STATUS_IDLE 0
+#define STATUS_ACTIVE 1
+
 typedef struct drone_position_t
 {
+    //timestamp of message
+    time_t timestamp;
+    //drone status
+    int status;
     //x position
     int x;
     //y position
@@ -29,36 +36,36 @@ typedef struct drone_position_t
 
 } drone_position;
 
-//socket file descriptor
+// socket file descriptor
 int fd_socket;
-//socket connection with drones file descriptors
+// socket connection with drones file descriptors
 int fd_drones[MAX_DRONES] = {0, 0, 0, 0};
-//drones number
+// drones number
 int drones_no = 0;
-//port number
+// port number
 int portno;
 
-//array of drones position
+// array of drones position
 drone_position positions[MAX_DRONES];
 
-//array of drones status
+// array of drones status
 int drones_status[MAX_DRONES] = {-1, -1, -1, -1};
 
-//server and client addresses
+// server and client addresses
 struct sockaddr_in server_addr, client_addr;
 
-//flag if the consumer received all the data
+// flag if the consumer received all the data
 int flag_terminate_process = 0;
 
-//variables for select function
+// variables for select function
 struct timeval timeout;
 fd_set readfds;
 fd_set dronesfds;
 
-//pointer to log file
+// pointer to log file
 FILE *logfile;
 
-//This function checks if something failed, exits the program and prints an error in the logfile
+// This function checks if something failed, exits the program and prints an error in the logfile
 int check(int retval)
 {
     if (retval == -1)
@@ -99,28 +106,28 @@ void check_new_connection()
     else
     {
 
-        //set timeout for select
+        // set timeout for select
         timeout.tv_sec = 0;
         timeout.tv_usec = 1000;
 
         FD_ZERO(&readfds);
-        //add the selected file descriptor to the selected fd_set
+        // add the selected file descriptor to the selected fd_set
         FD_SET(fd_socket, &readfds);
 
-        //take number of request
+        // take number of request
         int req_no = check(select(FD_SETSIZE + 1, &readfds, NULL, NULL, &timeout));
         for (int i = 0; i < req_no; i++)
         {
-            //define client length
+            // define client length
             int client_length = sizeof(client_addr);
 
-            //enstablish connection
+            // enstablish connection
             fd_drones[drones_no] = check(accept(fd_socket, (struct sockaddr *)&client_addr, &client_length));
             if (fd_drones[drones_no] < 0)
             {
                 check(-1);
             }
-            //write on log file
+            // write on log file
             fprintf(logfile, "master - drone %d connected\n", drones_no + 1);
             fflush(logfile);
             drones_status[drones_no] = 1;
@@ -132,13 +139,13 @@ void check_new_connection()
 
 int check_safe_movement(int drone, drone_position request_position)
 {
-    //check for map edges
+    // check for map edges
     if (request_position.x < 0 || request_position.x > MAX_X || request_position.y < 0 || request_position.y > MAX_Y)
         return 0;
 
     for (int i = 0; i < drones_no; i++)
     {
-        //check if there can be a collision between others drones
+        // check if there can be a collision between others drones
         if (positions[i].x == request_position.x && positions[i].y == request_position.y)
             return 0;
     }
@@ -152,49 +159,50 @@ void check_move_request()
     else
     {
 
-        //set timeout for select
+        // set timeout for select
         timeout.tv_sec = 0;
         timeout.tv_usec = 1000;
 
         FD_ZERO(&dronesfds);
-        //add the selected file descriptor to the selected fd_set
+        // add the selected file descriptor to the selected fd_set
         for (int i = 0; i < drones_no; i++)
         {
             FD_SET(fd_drones[i], &dronesfds);
         }
 
-        //take number of request
+        // take number of request
         int req_no = check(select(FD_SETSIZE + 1, &dronesfds, NULL, NULL, &timeout));
 
-        //for every request
+        // for every request
         for (int i = 0; i < req_no; i++)
         {
-            //find the drone that has made the request
+            // find the drone that has made the request
             for (int j = 0; j < drones_no; j++)
             {
-                //if this drone has made a request
+                // if this drone has made a request
                 if (FD_ISSET(fd_drones[j], &dronesfds))
                 {
-                    //read requested position
+                    // read requested position
                     drone_position request_position;
                     check(read(fd_drones[j], &request_position, sizeof(request_position)));
 
-
-                    //if MAX_X*2 and MAX_Y*2 is sent via position, the drone switches state (from active to idle state and vice versa)
-                    if (request_position.x == MAX_X * 2 && request_position.y == MAX_Y * 2)
+                    // if MAX_X*2 and MAX_Y*2 is sent via position, the drone switches state (from active to idle state and vice versa)
+                    if (request_position.status == STATUS_IDLE)
                     {
-                        //switch position usinx xor operator (1^1=0 and 0^1 = 1)
-                        //status 1 means active, status 0 means idle. (Initial) status -1 means drone is not connected
-                        drones_status[j] ^= 1;
+                        //change drone status
+                        // status 1 means active, status 0 means idle. (Initial) status -1 means drone is not connected
+                        drones_status[j] = 0;
                     }
-                    else
+                    else if (request_position.status == STATUS_ACTIVE)
                     {
-                        //check if the movement is safe
+                        if(drones_status[j]==0) drones_status[j]=1;
+
+                        // check if the movement is safe
                         int verdict = check_safe_movement(j, request_position);
-                        //tell the drones if it can move
+                        // tell the drones if it can move
                         write(fd_drones[j], &verdict, sizeof(verdict));
 
-                        //if the drone can move, update its position
+                        // if the drone can move, update its position
                         if (verdict)
                         {
                             positions[j].x == request_position.x;
@@ -209,8 +217,6 @@ void check_move_request()
     return;
 }
 
-
-
 void update_map()
 {
 
@@ -220,8 +226,8 @@ void update_map()
 int main(int argc, char *argv[])
 {
 
-    //open log file in write mode
-    // logfile = fopen("./../logs/master_log.txt", "a");
+    // open log file in write mode
+    //  logfile = fopen("./../logs/master_log.txt", "a");
     logfile = fopen("master_log.txt", "a");
     if (logfile == NULL)
     {
@@ -241,62 +247,62 @@ int main(int argc, char *argv[])
 
     portno = 8080;
 
-    //write on log file
+    // write on log file
     fprintf(logfile, "master - received portno %d\n", portno);
     fflush(logfile);
 
-    //create socket
+    // create socket
     fd_socket = socket(AF_INET, SOCK_STREAM, 0);
     if (fd_socket < 0)
     {
         check(-1);
     }
 
-    //write on log file
+    // write on log file
     fprintf(logfile, "master - socket created\n");
     fflush(logfile);
 
-    //set server address for connection
+    // set server address for connection
     bzero((char *)&server_addr, sizeof(server_addr));
     server_addr.sin_family = AF_INET;
     server_addr.sin_addr.s_addr = INADDR_ANY;
     server_addr.sin_port = htons(portno);
 
-    //bind socket
+    // bind socket
     check(bind(fd_socket, (struct sockaddr *)&server_addr,
                sizeof(server_addr)));
 
-    //write on log file
+    // write on log file
     fprintf(logfile, "master - socket bound\n");
     fflush(logfile);
 
-    //wait for connections
+    // wait for connections
     check(listen(fd_socket, 5));
 
     while (!flag_terminate_process)
     {
-        //check if a new drone send a connection request
+        // check if a new drone send a connection request
         check_new_connection();
 
-        //check if some drones want to move
+        // check if some drones want to move
         check_move_request();
 
-        //update drones map on the console
+        // update drones map on the console
         update_map();
     }
 
-    //close sockets
+    // close sockets
     check(close(fd_socket));
     for (int i = 0; i < drones_no; i++)
     {
         check(close(fd_drones[i]));
     }
 
-    //write on log file
+    // write on log file
     fprintf(logfile, "master - all socket closed\n");
     fflush(logfile);
 
-    //close log file
+    // close log file
     fclose(logfile);
 
     return 0;
