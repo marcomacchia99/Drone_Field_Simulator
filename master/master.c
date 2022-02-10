@@ -26,7 +26,7 @@
 // #define NC '\033[0m'
 
 #define DRONE '*'
-#define EXPLORED '+'
+#define EXPLORED '.'
 
 #define STATUS_IDLE 0
 #define STATUS_ACTIVE 1
@@ -53,11 +53,16 @@ int drones_no = 0;
 // port number
 int portno;
 
+//////////////////////////////////////////////////////////////////////////////////////////////////////
 // array of drones position
 drone_position positions[MAX_DRONES];
 
 // array of drones status
 int drones_status[MAX_DRONES] = {-1, -1, -1, -1};
+
+// drone_position drones[MAX_DRONES];
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////
 
 int explored_positions[MAX_X][MAX_Y] = {0};
 
@@ -221,14 +226,18 @@ int check_safe_movement(int drone, drone_position request_position)
     // for every drone...
     for (int i = 0; i < drones_no; i++)
     {
-        // check if the position requested falls in a 3x3 area surrounding another drone
-        for (int j = positions[i].x - 1; j <= positions[i].x + 1; j++)
+        if (i != drone)
         {
-            for (int k = positions[i].y - 1; k <= positions[i].y + 1; k++)
+
+            // check if the position requested falls in a 3x3 area surrounding another drone
+            for (int j = positions[i].x - 1; j <= positions[i].x + 1; j++)
             {
-                // check if there can be a collision between others drones
-                if (j == request_position.x && k == request_position.y)
-                    return 0;
+                for (int k = positions[i].y - 1; k <= positions[i].y + 1; k++)
+                {
+                    // check if there can be a collision between others drones
+                    if (j == request_position.x && k == request_position.y)
+                        return 0;
+                }
             }
         }
     }
@@ -275,6 +284,8 @@ void check_move_request()
                         // change drone status
                         //  status 1 means active, status 0 means idle. (Initial) status -1 means drone is not connected
                         drones_status[j] = 0;
+                        // update map
+                        update_map();
                     }
                     else if (request_position.status == STATUS_ACTIVE)
                     {
@@ -290,8 +301,8 @@ void check_move_request()
                         if (verdict)
                         {
                             // update new position
-                            positions[j].x == request_position.x;
-                            positions[j].y == request_position.y;
+                            positions[j].x = request_position.x;
+                            positions[j].y = request_position.y;
 
                             // update explored positions
                             explored_positions[request_position.x][request_position.y] = 1;
@@ -312,33 +323,11 @@ void update_map()
 {
 
     // Reset map
-    for (int i = 1; i <= MAX_X + 1; i++)
+    for (int i = 2; i <= MAX_X + 1; i++)
     {
-        for (int j = 1; j <= MAX_Y + 1; j++)
+        for (int j = 1; j <= MAX_Y; j++)
         {
-            move(j, i);
-            addch(' ');
-        }
-    }
-
-    // print actual drone position
-    for (int i = 0; i < drones_no; i++)
-    {
-        // blue drone are idle
-        if (drones_status[i] == 0)
-        {
-            attron(COLOR_PAIR(2));
-            // print drone
-            mvaddch(positions[i].x + 1, positions[i].y + 1, DRONE);
-            attroff(COLOR_PAIR(2));
-        }
-        // green drone are active
-        else if (drones_status[i] == 1)
-        {
-            attron(COLOR_PAIR(1));
-            // print drone
-            mvaddch(positions[i].x + 1, positions[i].y + 1, DRONE);
-            attroff(COLOR_PAIR(1));
+            mvaddch(j, i, ' ');
         }
     }
 
@@ -350,12 +339,35 @@ void update_map()
             if (explored_positions[i][j] == 1)
             {
                 // move cursor to the explored position and add marker
-                mvaddch(i + 1, j + 1, EXPLORED);
+                mvaddch(j + 1, i + 2, EXPLORED);
             }
         }
     }
 
-    printw("\nDrones connected:  %d\n", drones_no);
+    // print actual drone position
+    for (int i = 0; i < drones_no; i++)
+    {
+        // blue drone are idle
+        if (drones_status[i] == 0)
+        {
+            attron(COLOR_PAIR(2));
+            // print drone
+            mvaddch(positions[i].y + 1, positions[i].x + 2, DRONE);
+            attroff(COLOR_PAIR(2));
+        }
+        // green drone are active
+        else if (drones_status[i] == 1)
+        {
+            attron(COLOR_PAIR(1));
+            // print drone
+            mvaddch(positions[i].y + 1, positions[i].x + 2, DRONE);
+            attroff(COLOR_PAIR(1));
+        }
+    }
+
+    move(43, 0);
+
+    printw("Drones connected:  %d\n", drones_no);
 
     refresh(); // Send changes to the console.
 
@@ -433,6 +445,15 @@ void init_console()
 
 int main(int argc, char *argv[])
 {
+
+    // init array of drones position
+    for (int i = 0; i < MAX_DRONES; i++)
+    {
+        positions[i].timestamp = 0;
+        positions[i].status = -1;
+        positions[i].x = -1;
+        positions[i].y = -1;
+    }
 
     // init console GUI
     init_console();
