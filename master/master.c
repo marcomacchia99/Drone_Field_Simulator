@@ -1,3 +1,5 @@
+// compile with gcc master.c - lncurses - o master
+
 #define _GNU_SOURCE
 #include <errno.h>
 #include <stdio.h>
@@ -10,28 +12,34 @@
 #include <signal.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
+#include <ncurses.h>
+#include <time.h>
 
 #define MAX_DRONES 4 // max drones number
 #define MAX_X 80     // max x value
 #define MAX_Y 40     // max y value
 
-#define RED '\033[1;31m'
-#define GREEN '\033[1;32m'
-#define BLUE '\033[1;34m'
-#define NC '\033[0m'
+// #define RED '\033[1;31m'
+// #define GREEN '\033[1;32m'
+// #define BLUE '\033[1;34m'
+// #define GRAY '\033[1;30m'
+// #define NC '\033[0m'
+
+#define DRONE '*'
+#define EXPLORED '+'
 
 #define STATUS_IDLE 0
 #define STATUS_ACTIVE 1
 
 typedef struct drone_position_t
 {
-    //timestamp of message
+    // timestamp of message
     time_t timestamp;
-    //drone status
+    // drone status
     int status;
-    //x position
+    // x position
     int x;
-    //y position
+    // y position
     int y;
 
 } drone_position;
@@ -51,6 +59,8 @@ drone_position positions[MAX_DRONES];
 // array of drones status
 int drones_status[MAX_DRONES] = {-1, -1, -1, -1};
 
+int explored_positions[MAX_X][MAX_Y] = {0};
+
 // server and client addresses
 struct sockaddr_in server_addr, client_addr;
 
@@ -58,30 +68,49 @@ struct sockaddr_in server_addr, client_addr;
 int flag_terminate_process = 0;
 
 // variables for select function
-struct timeval timeout;
+struct timeval td;
 fd_set readfds;
 fd_set dronesfds;
 
 // pointer to log file
 FILE *logfile;
 
+// variable for logging event time
+time_t logtime;
+
+// functions headers
+int check(int retval);
+void close_program(int sig);
+void check_new_connection();
+int check_safe_movement(int drone, drone_position request_position);
+void check_move_request();
+void update_map();
+void setup_colors();
+void init_console();
+
 // This function checks if something failed, exits the program and prints an error in the logfile
 int check(int retval)
 {
     if (retval == -1)
     {
-        fprintf(logfile, "\nmaster - ERROR (" __FILE__ ":%d) -- %s\n", __LINE__, strerror(errno));
+        logtime = time(NULL);
+        fprintf(logfile, "%.19s: master - ERROR (" __FILE__ ":%d) -- %s\n", ctime(&logtime), __LINE__, strerror(errno));
         fflush(logfile);
+        if (errno == EINTR)
+        {
+            return retval;
+        }
         fclose(logfile);
         if (errno == EADDRINUSE)
         {
+            endwin();
             printf("\tError: address already in use. please change port\n");
             fflush(stdout);
             exit(-100);
         }
         else
         {
-
+            endwin();
             printf("\tAn error has been reported on log file.\n");
             fflush(stdout);
             exit(-1);
@@ -89,6 +118,39 @@ int check(int retval)
     }
     return retval;
 }
+
+#define CHECK(X) (                                                                                                                                        \
+    {                                                                                                                                                     \
+        int __val = (X);                                                                                                                                  \
+        (__val == -1 ? (                                                                                                                                  \
+                           {                                                                                                                              \
+                               fprintf(logfile, "%.19s: master - ERROR (" __FILE__ ":%d) -- %s\n", ctime(&logtime), __LINE__, strerror(errno));           \
+                               fflush(logfile);                                                                                                           \
+                               (errno == EINTR ? ()                                                                                                       \
+                                               : (                                                                                                        \
+                                                     {                                                                                                    \
+                                                         (errono == EADDRINUSE ? (                                                                        \
+                                                                                     {                                                                    \
+                                                                                         fclose(logfile);                                                 \
+                                                                                         endwin();                                                        \
+                                                                                         printf("\tError: address already in use. please change port\n"); \
+                                                                                         fflush(stdout);                                                  \
+                                                                                         exit(-100);                                                      \
+                                                                                         -100;                                                            \
+                                                                                     })                                                                   \
+                                                                               : (                                                                        \
+                                                                                     {                                                                    \
+                                                                                         fclose(logfile);                                                 \
+                                                                                         endwin();                                                        \
+                                                                                         printf("\tAn error has been reported on log file.\n");           \
+                                                                                         fflush(stdout);                                                  \
+                                                                                         exit(-1);                                                        \
+                                                                                         -1;                                                              \
+                                                                                     }));                                                                 \
+                                                     }));                                                                                                 \
+                           })                                                                                                                             \
+                     : __val);                                                                                                                            \
+    })
 
 void close_program(int sig)
 {
@@ -99,6 +161,17 @@ void close_program(int sig)
     return;
 }
 
+// handler for terminal resizing
+void signal_handler(int sig)
+{
+
+    if (sig == SIGWINCH)
+    {
+        // force console size
+        // printf("\e[8;%d;%dt", MAX_Y + 2, MAX_X + 4);
+    }
+}
+
 void check_new_connection()
 {
     if (drones_no == MAX_DRONES)
@@ -107,15 +180,15 @@ void check_new_connection()
     {
 
         // set timeout for select
-        timeout.tv_sec = 0;
-        timeout.tv_usec = 1000;
+        td.tv_sec = 0;
+        td.tv_usec = 1000;
 
         FD_ZERO(&readfds);
         // add the selected file descriptor to the selected fd_set
         FD_SET(fd_socket, &readfds);
 
         // take number of request
-        int req_no = check(select(FD_SETSIZE + 1, &readfds, NULL, NULL, &timeout));
+        int req_no = check(select(FD_SETSIZE + 1, &readfds, NULL, NULL, &td));
         for (int i = 0; i < req_no; i++)
         {
             // define client length
@@ -128,7 +201,9 @@ void check_new_connection()
                 check(-1);
             }
             // write on log file
-            fprintf(logfile, "master - drone %d connected\n", drones_no + 1);
+            logtime = time(NULL);
+            fprintf(logfile, "%.19s: master - drone %d connected\n", ctime(&logtime), drones_no + 1);
+
             fflush(logfile);
             drones_status[drones_no] = 1;
             drones_no++;
@@ -143,11 +218,19 @@ int check_safe_movement(int drone, drone_position request_position)
     if (request_position.x < 0 || request_position.x > MAX_X || request_position.y < 0 || request_position.y > MAX_Y)
         return 0;
 
+    // for every drone...
     for (int i = 0; i < drones_no; i++)
     {
-        // check if there can be a collision between others drones
-        if (positions[i].x == request_position.x && positions[i].y == request_position.y)
-            return 0;
+        // check if the position requested falls in a 3x3 area surrounding another drone
+        for (int j = positions[i].x - 1; j <= positions[i].x + 1; j++)
+        {
+            for (int k = positions[i].y - 1; k <= positions[i].y + 1; k++)
+            {
+                // check if there can be a collision between others drones
+                if (j == request_position.x && k == request_position.y)
+                    return 0;
+            }
+        }
     }
     return 1;
 }
@@ -160,8 +243,8 @@ void check_move_request()
     {
 
         // set timeout for select
-        timeout.tv_sec = 0;
-        timeout.tv_usec = 1000;
+        td.tv_sec = 0;
+        td.tv_usec = 1000;
 
         FD_ZERO(&dronesfds);
         // add the selected file descriptor to the selected fd_set
@@ -171,7 +254,7 @@ void check_move_request()
         }
 
         // take number of request
-        int req_no = check(select(FD_SETSIZE + 1, &dronesfds, NULL, NULL, &timeout));
+        int req_no = check(select(FD_SETSIZE + 1, &dronesfds, NULL, NULL, &td));
 
         // for every request
         for (int i = 0; i < req_no; i++)
@@ -186,16 +269,17 @@ void check_move_request()
                     drone_position request_position;
                     check(read(fd_drones[j], &request_position, sizeof(request_position)));
 
-                    // if MAX_X*2 and MAX_Y*2 is sent via position, the drone switches state (from active to idle state and vice versa)
+                    // check drone status, idle or active
                     if (request_position.status == STATUS_IDLE)
                     {
-                        //change drone status
-                        // status 1 means active, status 0 means idle. (Initial) status -1 means drone is not connected
+                        // change drone status
+                        //  status 1 means active, status 0 means idle. (Initial) status -1 means drone is not connected
                         drones_status[j] = 0;
                     }
                     else if (request_position.status == STATUS_ACTIVE)
                     {
-                        if(drones_status[j]==0) drones_status[j]=1;
+                        if (drones_status[j] == 0)
+                            drones_status[j] = 1;
 
                         // check if the movement is safe
                         int verdict = check_safe_movement(j, request_position);
@@ -205,8 +289,15 @@ void check_move_request()
                         // if the drone can move, update its position
                         if (verdict)
                         {
+                            // update new position
                             positions[j].x == request_position.x;
                             positions[j].y == request_position.y;
+
+                            // update explored positions
+                            explored_positions[request_position.x][request_position.y] = 1;
+
+                            // update map
+                            update_map();
                         }
                         break;
                     }
@@ -220,11 +311,134 @@ void check_move_request()
 void update_map()
 {
 
+    // Reset map
+    for (int i = 1; i <= MAX_X + 1; i++)
+    {
+        for (int j = 1; j <= MAX_Y + 1; j++)
+        {
+            move(j, i);
+            addch(' ');
+        }
+    }
+
+    // print actual drone position
+    for (int i = 0; i < drones_no; i++)
+    {
+        // blue drone are idle
+        if (drones_status[i] == 0)
+        {
+            attron(COLOR_PAIR(2));
+            // print drone
+            mvaddch(positions[i].x + 1, positions[i].y + 1, DRONE);
+            attroff(COLOR_PAIR(2));
+        }
+        // green drone are active
+        else if (drones_status[i] == 1)
+        {
+            attron(COLOR_PAIR(1));
+            // print drone
+            mvaddch(positions[i].x + 1, positions[i].y + 1, DRONE);
+            attroff(COLOR_PAIR(1));
+        }
+    }
+
+    // print already explored positions in gray
+    for (int i = 0; i < MAX_X; i++)
+    {
+        for (int j = 0; j < MAX_Y; j++)
+        {
+            if (explored_positions[i][j] == 1)
+            {
+                // move cursor to the explored position and add marker
+                mvaddch(i + 1, j + 1, EXPLORED);
+            }
+        }
+    }
+
+    printw("\nDrones connected:  %d\n", drones_no);
+
+    refresh(); // Send changes to the console.
+
     return;
+}
+
+// setup console colors
+void setup_colors()
+{
+
+    if (!has_colors())
+    {
+        endwin();
+        printf("This terminal is not allowed to print colors.\n");
+        exit(1);
+    }
+
+    start_color();
+    init_pair(1, COLOR_GREEN, COLOR_BLACK);
+    init_pair(2, COLOR_BLUE, COLOR_BLACK);
+    init_pair(3, COLOR_BLACK, COLOR_BLACK);
+    init_pair(4, COLOR_WHITE, COLOR_BLACK);
+}
+
+// Function to initialize the console GUI.
+// The ncurses library is used.
+void init_console()
+{
+
+    // set console size
+    printf("\e[8;%d;%dt", MAX_Y + 4, MAX_X + 4);
+
+    // init console
+    initscr();
+    refresh();
+    clear();
+    setup_colors();
+
+    // resize curses terminal
+    resize_term(MAX_Y + 4, MAX_X + 4);
+
+    // hide cursor
+    curs_set(0);
+
+    // print top wall
+    addstr("||");
+    for (int j = 2; j < MAX_X + 2; j++)
+    {
+        mvaddch(0, j, '=');
+    }
+    addstr("||");
+
+    // for each line...
+    for (int i = 0; i < MAX_Y; i++)
+    {
+        // print left wall
+        addstr("||");
+
+        for (int j = 0; j < MAX_X; j++)
+            addch(' ');
+        // print right wall
+        addstr("||");
+    }
+
+    // print bottom wall
+    addstr("||");
+    for (int j = 2; j < MAX_X + 2; j++)
+        mvaddch(MAX_Y + 1, j, '=');
+    addstr("||");
+
+    printw("\nDrones connected:  %d", drones_no);
+
+    refresh(); // Send changes to the console.
 }
 
 int main(int argc, char *argv[])
 {
+
+    // init console GUI
+    init_console();
+
+    // handle signal
+    signal(SIGWINCH, signal_handler);
 
     // open log file in write mode
     //  logfile = fopen("./../logs/master_log.txt", "a");
@@ -234,7 +448,10 @@ int main(int argc, char *argv[])
         printf("an error occured while creating master's log File\n");
         return 0;
     }
-    fprintf(logfile, "starting master\n");
+
+    // variable for logging event time
+    logtime = time(NULL);
+    fprintf(logfile, "\n%.19s: starting master\n", ctime(&logtime));
     fflush(logfile);
 
     // //getting port number
@@ -248,7 +465,8 @@ int main(int argc, char *argv[])
     portno = 8080;
 
     // write on log file
-    fprintf(logfile, "master - received portno %d\n", portno);
+    logtime = time(NULL);
+    fprintf(logfile, "%.19s: master - received portno %d\n", ctime(&logtime), portno);
     fflush(logfile);
 
     // create socket
@@ -259,7 +477,9 @@ int main(int argc, char *argv[])
     }
 
     // write on log file
-    fprintf(logfile, "master - socket created\n");
+    logtime = time(NULL);
+    fprintf(logfile, "%.19s: master - socket created\n", ctime(&logtime));
+
     fflush(logfile);
 
     // set server address for connection
@@ -273,7 +493,8 @@ int main(int argc, char *argv[])
                sizeof(server_addr)));
 
     // write on log file
-    fprintf(logfile, "master - socket bound\n");
+    logtime = time(NULL);
+    fprintf(logfile, "%.19s: master - socket bound\n", ctime(&logtime));
     fflush(logfile);
 
     // wait for connections
@@ -286,10 +507,10 @@ int main(int argc, char *argv[])
 
         // check if some drones want to move
         check_move_request();
-
-        // update drones map on the console
-        update_map();
     }
+
+    // close ncurses console
+    endwin();
 
     // close sockets
     check(close(fd_socket));
@@ -299,7 +520,8 @@ int main(int argc, char *argv[])
     }
 
     // write on log file
-    fprintf(logfile, "master - all socket closed\n");
+    logtime = time(NULL);
+    fprintf(logfile, "%.19s: master - all socket closed\n", ctime(&logtime));
     fflush(logfile);
 
     // close log file
