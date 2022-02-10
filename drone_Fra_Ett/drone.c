@@ -16,9 +16,11 @@
 #include <math.h>
 #include <ncurses.h>
 
-#define MAX_X 80       // max x value
-#define MAX_Y 40       // max y value
-#define MAX_CHARGE 100 // max battery level
+#define MAX_X 80        // max x value
+#define MAX_Y 40        // max y value
+#define MAX_CHARGE 100  // max battery level
+#define STATUS_IDLE 0   // idle drone status
+#define STATUS_ACTIVE 1 // active drone status
 
 /* FUNCTIONS HEADERS */
 float float_rand(float min, float max);
@@ -48,6 +50,10 @@ void signal_handler(int sig)
 
 typedef struct drone_position_t
 {
+    //timestamp of message
+    time_t timestamp;
+    //drone status
+    int status;
     // x position
     int x;
     // y position
@@ -78,9 +84,8 @@ bool direction = true;    // toggle for exploring direction
 char str[50];             // string buffer
 int dt = 100000;          // time step
 
-drone_position next_position;                             // next drone position
-drone_position landed = {.x = MAX_X * 2, .y = MAX_Y * 2}; // position for idle status
-drone_position actual_position = {.x = 10, .y = 10};      // actual drone position
+drone_position next_position = {.status = STATUS_ACTIVE};                           // next drone position                                 // position for idle status
+drone_position actual_position = {.status = STATUS_ACTIVE, .x = 10, .y = 10};       // actual drone position
 
 /* FUNCTIONS */
 float float_rand(float min, float max)
@@ -148,7 +153,7 @@ void compute_next_position()
 
     } while (map[next_position.y][next_position.x] == 1 && cycles < 10); // if an allowed positon is not found for more than 10 times, stop the while cycle
 
-    sprintf(str, "Next X = %d, Next Y = %d \n", next_position.x, next_position.y);
+    sprintf(str, "Next X = %d, Next Y = %d\n", next_position.x, next_position.y);
     mvaddstr(42, 0, str);
     refresh();
 
@@ -162,8 +167,9 @@ void recharge(int sockfd)
     attroff(COLOR_PAIR(2));
 
     logPrint("Low battery, landing for recharging.\n");
-
-    CHECK(write(sockfd, &landed, sizeof(drone_position))); // dummy command for idle status
+    next_position.timestamp = time(NULL);
+    next_position.status = STATUS_IDLE;
+    CHECK(write(sockfd, &next_position, sizeof(drone_position))); // dummy command for idle status
 
     attron(COLOR_PAIR(1));
     mvaddstr(40, 50, "Recharging...");
@@ -177,6 +183,7 @@ void recharge(int sockfd)
     }
 
     battery = MAX_CHARGE;
+    next_position.status = STATUS_ACTIVE;
     direction = !direction; // once the battery is fully charged, change exploration direction
 
     logPrint("Battery fully recharged.\n");
@@ -270,20 +277,24 @@ int change_velocity(int dt){
     int ret = CHECK(select(FD_SETSIZE, &rset, NULL, NULL, &tv));
 
     if (FD_ISSET(STDIN_FILENO, &rset) != 0) { // There is something to read!
-        command = getchar(); // Update the command.
+        input = getchar(); // Update the command.
     }
     if (input == 49){
-        dt = 100000;
+        dt = 200000;
     }
     else if (input == 50){
-        dt = 70000;
+        dt = 100000;
     }
     else if (input == 51){
-        dt = 40000;
+        dt = 70000;
     }
     else if (input == 52){
+        dt = 40000;
+    }
+    else if (input == 53){
         logPrint("Exit command received!");
         logPrint("Killing the process...");
+        endwin();
         kill(getpid(), SIGKILL);
     }
 
@@ -341,7 +352,7 @@ int main()
             recharge(sockfd);
 
         compute_next_position(); // looks for a new position
-
+        next_position.timestamp = time(NULL);
         CHECK(write(sockfd, &next_position, sizeof(drone_position))); // Writes the next position.
 
         mvaddstr(44, 0, "Data correctly written into the socket");
@@ -385,13 +396,14 @@ int main()
         }
 
         attron(COLOR_PAIR(3));
-        mvaddstr(48, 0, "Select one of the following commands for changing the drone's velocity:");
-        mvaddstr(49, 0, "[1] DEFAULT");
-        mvaddstr(50, 0, "[2] FAST");
-        mvaddstr(51, 0, "[3] VERY FAST");
+        mvaddstr(47, 0, "Select one of the following commands for changing the drone's velocity:");
+        mvaddstr(48, 0, "[1] SLOW");
+        mvaddstr(49, 0, "[2] DEFAULT");
+        mvaddstr(50, 0, "[3] FAST");
+        mvaddstr(51, 0, "[4] VERY FAST");
         attroff(COLOR_PAIR(3));
         attron(COLOR_PAIR(2));
-        mvaddstr(52, 0, "[4] Quit the application");
+        mvaddstr(52, 0, "[5] Quit the application");
         attroff(COLOR_PAIR(2));
 
         refresh();
