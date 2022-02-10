@@ -53,16 +53,8 @@ int drones_no = 0;
 // port number
 int portno;
 
-//////////////////////////////////////////////////////////////////////////////////////////////////////
-// array of drones position
+// array of drones position and status
 drone_position positions[MAX_DRONES];
-
-// array of drones status
-int drones_status[MAX_DRONES] = {-1, -1, -1, -1};
-
-// drone_position drones[MAX_DRONES];
-
-//////////////////////////////////////////////////////////////////////////////////////////////////////
 
 int explored_positions[MAX_X][MAX_Y] = {0};
 
@@ -210,7 +202,7 @@ void check_new_connection()
             fprintf(logfile, "%.19s: master - drone %d connected\n", ctime(&logtime), drones_no + 1);
 
             fflush(logfile);
-            drones_status[drones_no] = 1;
+            positions[drones_no].status = STATUS_ACTIVE;
             drones_no++;
         }
     }
@@ -283,14 +275,14 @@ void check_move_request()
                     {
                         // change drone status
                         //  status 1 means active, status 0 means idle. (Initial) status -1 means drone is not connected
-                        drones_status[j] = 0;
+                        positions[j].status = STATUS_IDLE;
                         // update map
                         update_map();
                     }
                     else if (request_position.status == STATUS_ACTIVE)
                     {
-                        if (drones_status[j] == 0)
-                            drones_status[j] = 1;
+                        if (positions[j].status == STATUS_IDLE)
+                            positions[j].status == STATUS_ACTIVE;
 
                         // check if the movement is safe
                         int verdict = check_safe_movement(j, request_position);
@@ -348,7 +340,7 @@ void update_map()
     for (int i = 0; i < drones_no; i++)
     {
         // blue drone are idle
-        if (drones_status[i] == 0)
+        if (positions[i].status == STATUS_IDLE)
         {
             attron(COLOR_PAIR(2));
             // print drone
@@ -356,7 +348,7 @@ void update_map()
             attroff(COLOR_PAIR(2));
         }
         // green drone are active
-        else if (drones_status[i] == 1)
+        else if (positions[i].status == STATUS_ACTIVE)
         {
             attron(COLOR_PAIR(1));
             // print drone
