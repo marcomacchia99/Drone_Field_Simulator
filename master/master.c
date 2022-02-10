@@ -19,12 +19,6 @@
 #define MAX_X 80     // max x value
 #define MAX_Y 40     // max y value
 
-// #define RED '\033[1;31m'
-// #define GREEN '\033[1;32m'
-// #define BLUE '\033[1;34m'
-// #define GRAY '\033[1;30m'
-// #define NC '\033[0m'
-
 #define DRONE '*'
 #define EXPLORED '.'
 
@@ -85,68 +79,59 @@ void update_map();
 void setup_colors();
 void init_console();
 
-// This function checks if something failed, exits the program and prints an error in the logfile
-int check(int retval)
-{
-    if (retval == -1)
-    {
-        logtime = time(NULL);
-        fprintf(logfile, "%.19s: master - ERROR (" __FILE__ ":%d) -- %s\n", ctime(&logtime), __LINE__, strerror(errno));
-        fflush(logfile);
-        if (errno == EINTR)
-        {
-            return retval;
-        }
-        fclose(logfile);
-        if (errno == EADDRINUSE)
-        {
-            endwin();
-            printf("\tError: address already in use. please change port\n");
-            fflush(stdout);
-            exit(-100);
-        }
-        else
-        {
-            endwin();
-            printf("\tAn error has been reported on log file.\n");
-            fflush(stdout);
-            exit(-1);
-        }
-    }
-    return retval;
-}
+// // This function checks if something failed, exits the program and prints an error in the logfile
+// int check(int retval)
+// {
+//     if (retval == -1)
+//     {
+//         logtime = time(NULL);
+//         fprintf(logfile, "%.19s: master - ERROR (" __FILE__ ":%d) -- %s\n", ctime(&logtime), __LINE__, strerror(errno));
+//         fflush(logfile);
+//         if (errno == EINTR)
+//         {
+//             return retval;
+//         }
+//         fclose(logfile);
+//         if (errno == EADDRINUSE)
+//         {
+//             endwin();
+//             printf("\tError: address already in use. please change port\n");
+//             fflush(stdout);
+//             exit(-100);
+//         }
+//         else
+//         {
+//             endwin();
+//             printf("\tAn error has been reported on log file.\n");
+//             fflush(stdout);
+//             exit(-1);
+//         }
+//     }
+//     return retval;
+// }
 
-#define CHECK(X) (                                                                                                                                        \
-    {                                                                                                                                                     \
-        int __val = (X);                                                                                                                                  \
-        (__val == -1 ? (                                                                                                                                  \
-                           {                                                                                                                              \
-                               fprintf(logfile, "%.19s: master - ERROR (" __FILE__ ":%d) -- %s\n", ctime(&logtime), __LINE__, strerror(errno));           \
-                               fflush(logfile);                                                                                                           \
-                               (errno == EINTR ? ()                                                                                                       \
-                                               : (                                                                                                        \
-                                                     {                                                                                                    \
-                                                         (errono == EADDRINUSE ? (                                                                        \
-                                                                                     {                                                                    \
-                                                                                         fclose(logfile);                                                 \
-                                                                                         endwin();                                                        \
-                                                                                         printf("\tError: address already in use. please change port\n"); \
-                                                                                         fflush(stdout);                                                  \
-                                                                                         exit(-100);                                                      \
-                                                                                         -100;                                                            \
-                                                                                     })                                                                   \
-                                                                               : (                                                                        \
-                                                                                     {                                                                    \
-                                                                                         fclose(logfile);                                                 \
-                                                                                         endwin();                                                        \
-                                                                                         printf("\tAn error has been reported on log file.\n");           \
-                                                                                         fflush(stdout);                                                  \
-                                                                                         exit(-1);                                                        \
-                                                                                         -1;                                                              \
-                                                                                     }));                                                                 \
-                                                     }));                                                                                                 \
-                           })                                                                                                                             \
-                     : __val);                                                                                                                            \
+// This macro checks if something failed, exits the program and prints an error in the logfile
+#define CHECK(X) (                                                                                                                              \
+    {                                                                                                                                           \
+        int __val = (X);                                                                                                                        \
+        (__val == -1 ? (                                                                                                                        \
+                           {                                                                                                                    \
+                               fprintf(logfile, "%.19s: master - ERROR (" __FILE__ ":%d) -- %s\n", ctime(&logtime), __LINE__, strerror(errno)); \
+                               fflush(logfile);                                                                                                 \
+                               (errno == EINTR ? (                                                                                              \
+                                                     {                                                                                          \
+                                                         __val;                                                                                 \
+                                                     })                                                                                         \
+                                               : (                                                                                              \
+                                                     {                                                                                          \
+                                                         fclose(logfile);                                                                       \
+                                                         endwin();                                                                              \
+                                                         printf("\tAn error has been reported on log file.\n");                                 \
+                                                         exit(-1);                                                                              \
+                                                         -1;                                                                                    \
+                                                     }));                                                                                       \
+                           })                                                                                                                   \
+                     : __val);                                                                                                                  \
     })
 
 void close_program(int sig)
@@ -164,8 +149,8 @@ void signal_handler(int sig)
 
     if (sig == SIGWINCH)
     {
-        // force console size
-        // printf("\e[8;%d;%dt", MAX_Y + 2, MAX_X + 4);
+        endwin();
+        init_console();
     }
 }
 
@@ -185,17 +170,17 @@ void check_new_connection()
         FD_SET(fd_socket, &readfds);
 
         // take number of request
-        int req_no = check(select(FD_SETSIZE + 1, &readfds, NULL, NULL, &td));
+        int req_no = CHECK(select(FD_SETSIZE + 1, &readfds, NULL, NULL, &td));
         for (int i = 0; i < req_no; i++)
         {
             // define client length
             int client_length = sizeof(client_addr);
 
             // enstablish connection
-            fd_drones[drones_no] = check(accept(fd_socket, (struct sockaddr *)&client_addr, &client_length));
+            fd_drones[drones_no] = CHECK(accept(fd_socket, (struct sockaddr *)&client_addr, &client_length));
             if (fd_drones[drones_no] < 0)
             {
-                check(-1);
+                CHECK(-1);
             }
             // write on log file
             logtime = time(NULL);
@@ -255,7 +240,7 @@ void check_move_request()
         }
 
         // take number of request
-        int req_no = check(select(FD_SETSIZE + 1, &dronesfds, NULL, NULL, &td));
+        int req_no = CHECK(select(FD_SETSIZE + 1, &dronesfds, NULL, NULL, &td));
 
         // for every request
         for (int i = 0; i < req_no; i++)
@@ -268,7 +253,7 @@ void check_move_request()
                 {
                     // read requested position
                     drone_position request_position;
-                    check(read(fd_drones[j], &request_position, sizeof(request_position)));
+                    CHECK(read(fd_drones[j], &request_position, sizeof(request_position)));
 
                     // check drone status, idle or active
                     if (request_position.status == STATUS_IDLE)
@@ -282,7 +267,7 @@ void check_move_request()
                     else if (request_position.status == STATUS_ACTIVE)
                     {
                         if (positions[j].status == STATUS_IDLE)
-                            positions[j].status == STATUS_ACTIVE;
+                            positions[j].status = STATUS_ACTIVE;
 
                         // check if the movement is safe
                         int verdict = check_safe_movement(j, request_position);
@@ -486,7 +471,7 @@ int main(int argc, char *argv[])
     fd_socket = socket(AF_INET, SOCK_STREAM, 0);
     if (fd_socket < 0)
     {
-        check(-1);
+        CHECK(-1);
     }
 
     // write on log file
@@ -502,7 +487,7 @@ int main(int argc, char *argv[])
     server_addr.sin_port = htons(portno);
 
     // bind socket
-    check(bind(fd_socket, (struct sockaddr *)&server_addr,
+    CHECK(bind(fd_socket, (struct sockaddr *)&server_addr,
                sizeof(server_addr)));
 
     // write on log file
@@ -511,7 +496,7 @@ int main(int argc, char *argv[])
     fflush(logfile);
 
     // wait for connections
-    check(listen(fd_socket, 5));
+    CHECK(listen(fd_socket, 5));
 
     while (!flag_terminate_process)
     {
@@ -526,10 +511,10 @@ int main(int argc, char *argv[])
     endwin();
 
     // close sockets
-    check(close(fd_socket));
+    CHECK(close(fd_socket));
     for (int i = 0; i < drones_no; i++)
     {
-        check(close(fd_drones[i]));
+        CHECK(close(fd_drones[i]));
     }
 
     // write on log file
