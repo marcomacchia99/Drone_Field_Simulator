@@ -85,7 +85,7 @@ void init_console();
 //     if (retval == -1)
 //     {
 //         logtime = time(NULL);
-//         fprintf(logfile, "%.19s: master - ERROR (" __FILE__ ":%d) -- %s\n", ctime(&logtime), __LINE__, strerror(errno));
+//         fprintf(logfile, "%.19s: ERROR (" __FILE__ ":%d) -- %s\n", ctime(&logtime), __LINE__, strerror(errno));
 //         fflush(logfile);
 //         if (errno == EINTR)
 //         {
@@ -116,7 +116,8 @@ void init_console();
         int __val = (X);                                                                                                                        \
         (__val == -1 ? (                                                                                                                        \
                            {                                                                                                                    \
-                               fprintf(logfile, "%.19s: master - ERROR (" __FILE__ ":%d) -- %s\n", ctime(&logtime), __LINE__, strerror(errno)); \
+                               logtime = time(NULL);                                                                                            \
+                               fprintf(logfile, "%.19s: ERROR (" __FILE__ ":%d) -- %s\n", ctime(&logtime), __LINE__, strerror(errno)); \
                                fflush(logfile);                                                                                                 \
                                (errno == EINTR ? (                                                                                              \
                                                      {                                                                                          \
@@ -144,7 +145,7 @@ void close_program(int sig)
 }
 
 // handler for terminal resizing
-void signal_handler(int sig)
+void handle_resize(int sig)
 {
 
     if (sig == SIGWINCH)
@@ -184,7 +185,7 @@ void check_new_connection()
             }
             // write on log file
             logtime = time(NULL);
-            fprintf(logfile, "%.19s: master - drone %d connected\n", ctime(&logtime), drones_no + 1);
+            fprintf(logfile, "%.19s: drone %d connected\n", ctime(&logtime), drones_no + 1);
 
             fflush(logfile);
             positions[drones_no].status = STATUS_ACTIVE;
@@ -198,8 +199,14 @@ int check_safe_movement(int drone, drone_position request_position)
 {
     // check for map edges
     if (request_position.x < 0 || request_position.x > MAX_X || request_position.y < 0 || request_position.y > MAX_Y)
-        return 0;
+    {
+        // write on log file
+        logtime = time(NULL);
+        fprintf(logfile, "%.19s: drone %d can't go in (%d,%d)\n", ctime(&logtime), drone, request_position.x, request_position.y);
+        fflush(logfile);
 
+        return 0;
+    }
     // for every drone...
     for (int i = 0; i < drones_no; i++)
     {
@@ -213,7 +220,14 @@ int check_safe_movement(int drone, drone_position request_position)
                 {
                     // check if there can be a collision between others drones
                     if (j == request_position.x && k == request_position.y)
+                    {
+                        // write on log file
+                        logtime = time(NULL);
+                        fprintf(logfile, "%.19s: drone %d can't go in (%d,%d)\n", ctime(&logtime), drone, request_position.x, request_position.y);
+                        fflush(logfile);
+
                         return 0;
+                    }
                 }
             }
         }
@@ -261,6 +275,12 @@ void check_move_request()
                         // change drone status
                         //  status 1 means active, status 0 means idle. (Initial) status -1 means drone is not connected
                         positions[j].status = STATUS_IDLE;
+
+                        // write on log file
+                        logtime = time(NULL);
+                        fprintf(logfile, "%.19s: drone %d going idle\n", ctime(&logtime), j);
+                        fflush(logfile);
+
                         // update map
                         update_map();
                     }
@@ -268,6 +288,11 @@ void check_move_request()
                     {
                         if (positions[j].status == STATUS_IDLE)
                             positions[j].status = STATUS_ACTIVE;
+
+                        // write on log file
+                        logtime = time(NULL);
+                        fprintf(logfile, "%.19s: drone %d requests position (%d,%d)\n", ctime(&logtime), j, request_position.x, request_position.y);
+                        fflush(logfile);
 
                         // check if the movement is safe
                         int verdict = check_safe_movement(j, request_position);
@@ -321,26 +346,37 @@ void update_map()
         }
     }
 
+    // enable bold characters
+    attron(A_BOLD);
     // print actual drone position
     for (int i = 0; i < drones_no; i++)
     {
         // blue drone are idle
         if (positions[i].status == STATUS_IDLE)
-        {
             attron(COLOR_PAIR(2));
-            // print drone
-            mvaddch(positions[i].y + 1, positions[i].x + 2, DRONE);
-            attroff(COLOR_PAIR(2));
-        }
         // green drone are active
         else if (positions[i].status == STATUS_ACTIVE)
-        {
             attron(COLOR_PAIR(1));
-            // print drone
-            mvaddch(positions[i].y + 1, positions[i].x + 2, DRONE);
-            attroff(COLOR_PAIR(1));
+
+        // print drone and label
+        mvaddch(positions[i].y + 1, positions[i].x + 2, DRONE);
+        if (positions[i].y == 0)
+        {
+            mvaddch(positions[i].y + 2, positions[i].x + 2, (i + 1) + '0');
         }
+        else
+        {
+            mvaddch(positions[i].y, positions[i].x + 2, (i + 1) + '0');
+        }
+
+        if (positions[i].status == STATUS_IDLE)
+            attroff(COLOR_PAIR(2));
+        else if (positions[i].status == STATUS_ACTIVE)
+            attroff(COLOR_PAIR(1));
     }
+
+    // disable bold characters
+    attroff(A_BOLD);
 
     move(43, 0);
 
@@ -389,6 +425,9 @@ void init_console()
     // hide cursor
     curs_set(0);
 
+    // enable bold characters
+    attron(A_BOLD);
+
     // print top wall
     addstr("||");
     for (int j = 2; j < MAX_X + 2; j++)
@@ -415,6 +454,9 @@ void init_console()
         mvaddch(MAX_Y + 1, j, '=');
     addstr("||");
 
+    // disable bold characters
+    attroff(A_BOLD);
+
     printw("\nDrones connected:  %d", drones_no);
 
     refresh(); // Send changes to the console.
@@ -422,21 +464,27 @@ void init_console()
 
 int main(int argc, char *argv[])
 {
-
-    // init array of drones position
-    for (int i = 0; i < MAX_DRONES; i++)
-    {
-        positions[i].timestamp = 0;
-        positions[i].status = -1;
-        positions[i].x = -1;
-        positions[i].y = -1;
-    }
+    /////////////////////////////////////////////////////////////non serve in teoria
+    // // init array of drones position
+    // for (int i = 0; i < MAX_DRONES; i++)
+    // {
+    //     positions[i].timestamp = 0;
+    //     positions[i].status = -1;
+    //     positions[i].x = -1;
+    //     positions[i].y = -1;
+    // }
 
     // init console GUI
     init_console();
 
-    // handle signal
-    signal(SIGWINCH, signal_handler);
+    // signal(SIGWINCH, signal_handler);  //obsoleto e dà errore quando viene interrotta una syscall///////////////////////////////
+
+    // handle terminal resize signal
+    struct sigaction sa;
+    sa.sa_handler = handle_resize;
+    sigemptyset(&sa.sa_mask);
+    sa.sa_flags = SA_RESTART;
+    CHECK(sigaction(SIGWINCH, &sa, NULL));
 
     // open log file in write mode
     //  logfile = fopen("./../logs/master_log.txt", "a");
@@ -455,7 +503,7 @@ int main(int argc, char *argv[])
     // //getting port number
     // if (argc < 2)
     // {
-    //     fprintf(stderr, "master - ERROR, no port provided\n");
+    //     fprintf(stderr, "ERROR, no port provided\n");
     //     exit(0);
     // }
     // portno = atoi(argv[1]);
@@ -464,7 +512,7 @@ int main(int argc, char *argv[])
 
     // write on log file
     logtime = time(NULL);
-    fprintf(logfile, "%.19s: master - received portno %d\n", ctime(&logtime), portno);
+    fprintf(logfile, "%.19s: received portno %d\n", ctime(&logtime), portno);
     fflush(logfile);
 
     // create socket
@@ -476,7 +524,7 @@ int main(int argc, char *argv[])
 
     // write on log file
     logtime = time(NULL);
-    fprintf(logfile, "%.19s: master - socket created\n", ctime(&logtime));
+    fprintf(logfile, "%.19s: socket created\n", ctime(&logtime));
 
     fflush(logfile);
 
@@ -492,7 +540,7 @@ int main(int argc, char *argv[])
 
     // write on log file
     logtime = time(NULL);
-    fprintf(logfile, "%.19s: master - socket bound\n", ctime(&logtime));
+    fprintf(logfile, "%.19s: socket bound\n", ctime(&logtime));
     fflush(logfile);
 
     // wait for connections
@@ -519,7 +567,7 @@ int main(int argc, char *argv[])
 
     // write on log file
     logtime = time(NULL);
-    fprintf(logfile, "%.19s: master - all socket closed\n", ctime(&logtime));
+    fprintf(logfile, "%.19s: all socket closed\n", ctime(&logtime));
     fflush(logfile);
 
     // close log file
