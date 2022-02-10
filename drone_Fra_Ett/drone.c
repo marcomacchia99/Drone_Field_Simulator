@@ -16,9 +16,11 @@
 #include <math.h>
 #include <ncurses.h>
 
-#define MAX_X 80       // max x value
-#define MAX_Y 40       // max y value
-#define MAX_CHARGE 100 // max battery level
+#define MAX_X 80        // max x value
+#define MAX_Y 40        // max y value
+#define MAX_CHARGE 200  // max battery level
+#define STATUS_IDLE 0   // idle drone status
+#define STATUS_ACTIVE 1 // active drone status
 
 /* FUNCTIONS HEADERS */
 float float_rand(float min, float max);
@@ -47,7 +49,12 @@ void signal_handler(int sig)
 }
 
 typedef struct drone_position_t
+    // info about position, status and time
 {
+    //timestamp of message
+    time_t timestamp;
+    //drone status
+    int status;
     // x position
     int x;
     // y position
@@ -78,9 +85,8 @@ bool direction = true;    // toggle for exploring direction
 char str[50];             // string buffer
 int dt = 100000;          // time step
 
-drone_position next_position;                             // next drone position
-drone_position landed = {.x = MAX_X * 2, .y = MAX_Y * 2}; // position for idle status
-drone_position actual_position = {.x = 10, .y = 10};      // actual drone position
+drone_position next_position = {.status = STATUS_ACTIVE};                           // next drone position
+drone_position actual_position = {.status = STATUS_ACTIVE, .x = 10, .y = 10};       // actual drone position
 
 /* FUNCTIONS */
 float float_rand(float min, float max)
@@ -102,7 +108,7 @@ void logPrint(char *string)
 
 void compute_next_position()
 {
-    /* Function to compute a new position. A better coverage algorithm will be implemented */
+    /* Function to compute a new position.*/
     int cycles = 0;
     do
     {
@@ -146,9 +152,10 @@ void compute_next_position()
         }
         cycles++; // increment cycles
 
-    } while (map[next_position.y][next_position.x] == 1 && cycles < 10); // if an allowed positon is not found for more than 10 times, stop the while cycle
+    } while (map[next_position.y][next_position.x] == 1 && cycles < 10); 
+        // if an allowed positon is not found for more than 10 times, stop the while cycle
 
-    sprintf(str, "Next X = %d, Next Y = %d \n", next_position.x, next_position.y);
+    sprintf(str, "Next X = %d, Next Y = %d\n", next_position.x, next_position.y);
     mvaddstr(42, 0, str);
     refresh();
 
@@ -157,13 +164,16 @@ void compute_next_position()
 
 void recharge(int sockfd)
 {
+    /*Function for recharging the drone's battery*/
+
     attron(COLOR_PAIR(2));
     mvaddstr(43, 0, "Low battery, landing for recharging.");
     attroff(COLOR_PAIR(2));
 
     logPrint("Low battery, landing for recharging.\n");
-
-    CHECK(write(sockfd, &landed, sizeof(drone_position))); // dummy command for idle status
+    next_position.timestamp = time(NULL);                           // fill the time field of the struct
+    next_position.status = STATUS_IDLE;                             // set the idle status
+    CHECK(write(sockfd, &next_position, sizeof(drone_position)));   // command for idle status
 
     attron(COLOR_PAIR(1));
     mvaddstr(40, 50, "Recharging...");
@@ -172,12 +182,13 @@ void recharge(int sockfd)
 
     for (int i = 1; i <= MAX_CHARGE; i++)
     {
-        usleep(50000);
+        usleep(25000);
         loading_bar(i, MAX_CHARGE); // graphical tool that represents a recharging bar
     }
 
-    battery = MAX_CHARGE;
-    direction = !direction; // once the battery is fully charged, change exploration direction
+    battery = MAX_CHARGE;                   // battery fully charged
+    next_position.status = STATUS_ACTIVE;   // reset the drone status to active
+    direction = !direction;                 // once the battery is fully charged, change exploration direction
 
     logPrint("Battery fully recharged.\n");
 
@@ -231,6 +242,7 @@ void setup_colors()
     }
 
     start_color();
+    /* COLOR PAIRS */
     init_pair(1, COLOR_GREEN, COLOR_BLACK);
     init_pair(2, COLOR_RED, COLOR_BLACK);
     init_pair(3, COLOR_YELLOW, COLOR_BLACK);
@@ -239,6 +251,7 @@ void setup_colors()
 
 void setup_map()
 {
+    /*Function for printing the map. It is useful as a graphical visualization of the visited spots*/
     for (int i = 0; i < 40; i++)
     {
         for (int j = 0; j < 80; j++)
@@ -257,11 +270,24 @@ void setup_map()
             }
         }
     }
+
+    /* Menu for changing the drone's velocity*/
+    attron(COLOR_PAIR(3));
+    mvaddstr(47, 0, "Select one of the following commands for changing the drone's velocity:");
+    mvaddstr(48, 0, "[1] SLOW");
+    mvaddstr(49, 0, "[2] DEFAULT");
+    mvaddstr(50, 0, "[3] FAST");
+    mvaddstr(51, 0, "[4] VERY FAST");
+    attroff(COLOR_PAIR(3));
+    attron(COLOR_PAIR(2));
+    mvaddstr(52, 0, "[5] Quit the application");
+    attroff(COLOR_PAIR(2));
 }
 
 
 int change_velocity(int dt){
 
+    /* Funciton for changing the drone's velocity */
     char input;
     struct timeval tv = {.tv_sec = 0, .tv_usec = 0};
     fd_set rset;
@@ -270,23 +296,28 @@ int change_velocity(int dt){
     int ret = CHECK(select(FD_SETSIZE, &rset, NULL, NULL, &tv));
 
     if (FD_ISSET(STDIN_FILENO, &rset) != 0) { // There is something to read!
-        command = getchar(); // Update the command.
+        input = getchar(); // Update the command.
     }
-    if (input == 49){
-        dt = 100000;
+    if (input == 49){       // '1' keyboard key
+        dt = 200000;        // change the time sleep
     }
-    else if (input == 50){
-        dt = 70000;
+    else if (input == 50){  // '2' keyboard key
+        dt = 100000;        // change the time sleep
     }
-    else if (input == 51){
-        dt = 40000;
+    else if (input == 51){  // '3' keyboard key
+        dt = 70000;         // change the time sleep
     }
-    else if (input == 52){
+    else if (input == 52){  // '4' keyboard key
+        dt = 40000;         // change the time sleep
+    }
+    else if (input == 53){  // '5' keyboard key
         logPrint("Exit command received!");
         logPrint("Killing the process...");
-        kill(getpid(), SIGKILL);
+        endwin();                   // terminates the GUI
+        kill(getpid(), SIGKILL);    // kill the process
     }
 
+    // return the new time sleep
     return dt;
 }
 
@@ -300,7 +331,7 @@ int main()
     srand(time(NULL));            // Randomize
 
     /* Open and write on the log file. */
-    log_file = fopen("./log_file.txt", "w");
+    log_file = fopen("./log_file.txt", "w");           
     logPrint("Log file successfully created.\n");
     sprintf(str, "Drone 007 PID is: %d \n", getpid());
     logPrint(str);
@@ -323,7 +354,8 @@ int main()
     serv_addr.sin_port = htons(portno);
     serv_addr.sin_addr.s_addr = INADDR_ANY;
 
-    CHECK(connect(sockfd, (struct sockaddr *)&serv_addr, sizeof(serv_addr))); // Listens on the socket for connections. (struct sockaddr *)&serv_addr
+    /* Connect to the server address*/
+    CHECK(connect(sockfd, (struct sockaddr *)&serv_addr, sizeof(serv_addr)));
 
     logPrint("Connection successfully established.\n");
 
@@ -340,25 +372,31 @@ int main()
         if (battery == 0) // Low battery
             recharge(sockfd);
 
-        compute_next_position(); // looks for a new position
-
-        CHECK(write(sockfd, &next_position, sizeof(drone_position))); // Writes the next position.
+        compute_next_position();                                        // looks for a new position
+        next_position.timestamp = time(NULL);                           // updates the time at which the position is sent
+        CHECK(write(sockfd, &next_position, sizeof(drone_position)));   // writes the next position.
 
         mvaddstr(44, 0, "Data correctly written into the socket");
         refresh();
 
         logPrint("Data correctly written into the socket.\n");
 
-        CHECK(read(sockfd, &command, sizeof(int))); // Reads a feedback. ~ command = 0 if next_position is not allowed. ~ command = 1 if next posotion is allowed
+        /* 
+        Reads a feedback. 
+        1) command = 0 if next_position is not allowed. 
+        2) command = 1 if next posotion is allowed 
+        */
+        CHECK(read(sockfd, &command, sizeof(int))); 
 
         mvaddstr(45, 0, "Feedback correctly read from master process");
         refresh();
 
         logPrint("Feedback correctly read from master process. \n");
 
-        // Not allowed
+        // Position not allowed
         if (command == 0)
         {
+            // stop the drone
             attron(COLOR_PAIR(2));
             mvaddstr(46, 0, "Drone stopped, position not allowed");
             attroff(COLOR_PAIR(2));
@@ -367,9 +405,10 @@ int main()
             logPrint("Drone stopped, position not allowed.\n");
         }
 
-        // Allowed
+        // Position allowed
         if (command == 1)
         {
+            // move to the next position
             attron(COLOR_PAIR(1));
             mvaddstr(46, 0, "Position allowed, drone is moving   ");
             attroff(COLOR_PAIR(1));
@@ -377,32 +416,22 @@ int main()
 
             logPrint("Position allowed, drone is moving.\n");
 
-            actual_position = next_position;
-            map[actual_position.y][actual_position.x] = true;
+            actual_position = next_position;                    // updates the actual position
+
+            /* Set the visited spot */
+            map[actual_position.y][actual_position.x] = true;   
             attron(COLOR_PAIR(2));
-            mvaddch(actual_position.y, actual_position.x, '1');
+            mvaddch(actual_position.y, actual_position.x, '1'); 
             attroff(COLOR_PAIR(2));
         }
 
-        attron(COLOR_PAIR(3));
-        mvaddstr(48, 0, "Select one of the following commands for changing the drone's velocity:");
-        mvaddstr(49, 0, "[1] DEFAULT");
-        mvaddstr(50, 0, "[2] FAST");
-        mvaddstr(51, 0, "[3] VERY FAST");
-        attroff(COLOR_PAIR(3));
-        attron(COLOR_PAIR(2));
-        mvaddstr(52, 0, "[4] Quit the application");
-        attroff(COLOR_PAIR(2));
-
         refresh();
 
-        // Battery decreases
-        battery--;
-        loading_bar(battery, MAX_CHARGE); // graphical tool that represents a decharging bar
-
-        dt = change_velocity(dt); // change the dt time quantum depending on the slected drone velocity
         
-        usleep(dt); // sleep for dt second
+        battery--;                          // Battery decreases
+        loading_bar(battery, MAX_CHARGE);   // graphical tool that represents a decharging bar
+        dt = change_velocity(dt);           // change the dt time quantum depending on the slected drone velocity
+        usleep(dt);                         // sleep for dt second
 
     } // End of the while cycle.
 
