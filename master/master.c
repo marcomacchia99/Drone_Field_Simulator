@@ -111,28 +111,28 @@ void init_console();
 // }
 
 // This macro checks if something failed, exits the program and prints an error in the logfile
-#define CHECK(X) (                                                                                                                              \
-    {                                                                                                                                           \
-        int __val = (X);                                                                                                                        \
-        (__val == -1 ? (                                                                                                                        \
-                           {                                                                                                                    \
-                               logtime = time(NULL);                                                                                            \
+#define CHECK(X) (                                                                                                                     \
+    {                                                                                                                                  \
+        int __val = (X);                                                                                                               \
+        (__val == -1 ? (                                                                                                               \
+                           {                                                                                                           \
+                               logtime = time(NULL);                                                                                   \
                                fprintf(logfile, "%.19s: ERROR (" __FILE__ ":%d) -- %s\n", ctime(&logtime), __LINE__, strerror(errno)); \
-                               fflush(logfile);                                                                                                 \
-                               (errno == EINTR ? (                                                                                              \
-                                                     {                                                                                          \
-                                                         __val;                                                                                 \
-                                                     })                                                                                         \
-                                               : (                                                                                              \
-                                                     {                                                                                          \
-                                                         fclose(logfile);                                                                       \
-                                                         endwin();                                                                              \
-                                                         printf("\tAn error has been reported on log file.\n");                                 \
-                                                         exit(-1);                                                                              \
-                                                         -1;                                                                                    \
-                                                     }));                                                                                       \
-                           })                                                                                                                   \
-                     : __val);                                                                                                                  \
+                               fflush(logfile);                                                                                        \
+                               (errno == EINTR ? (                                                                                     \
+                                                     {                                                                                 \
+                                                         __val;                                                                        \
+                                                     })                                                                                \
+                                               : (                                                                                     \
+                                                     {                                                                                 \
+                                                         fclose(logfile);                                                              \
+                                                         endwin();                                                                     \
+                                                         printf("\tAn error has been reported on log file.\n");                        \
+                                                         exit(-1);                                                                     \
+                                                         -1;                                                                           \
+                                                     }));                                                                              \
+                           })                                                                                                          \
+                     : __val);                                                                                                         \
     })
 
 void close_program(int sig)
@@ -348,6 +348,7 @@ void update_map()
 
     // enable bold characters
     attron(A_BOLD);
+
     // print actual drone position
     for (int i = 0; i < drones_no; i++)
     {
@@ -355,7 +356,7 @@ void update_map()
         if (positions[i].status == STATUS_IDLE)
             attron(COLOR_PAIR(2));
         // green drone are active
-        else if (positions[i].status == STATUS_ACTIVE)
+        else
             attron(COLOR_PAIR(1));
 
         // print drone and label
@@ -369,9 +370,10 @@ void update_map()
             mvaddch(positions[i].y, positions[i].x + 2, (i + 1) + '0');
         }
 
+        // disable colors
         if (positions[i].status == STATUS_IDLE)
             attroff(COLOR_PAIR(2));
-        else if (positions[i].status == STATUS_ACTIVE)
+        else
             attroff(COLOR_PAIR(1));
     }
 
