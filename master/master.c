@@ -510,7 +510,7 @@ int main(int argc, char *argv[])
     // }
     // portno = atoi(argv[1]);
 
-    portno = 8080;
+    portno = atoi(argv[1]);
 
     // write on log file
     logtime = time(NULL);

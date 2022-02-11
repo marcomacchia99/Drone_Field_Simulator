@@ -323,10 +323,10 @@ int change_velocity(int dt){
 
 
 /* MAIN */
-int main()
+int main(int argc, char * argv[])
 {
     int sockfd;                   // File descriptors.
-    int portno = 8080;            // Used port number.
+    int portno = atoi(argv[1]);   // Used port number.
     struct sockaddr_in serv_addr; // Address of the server and address of the client.
     srand(time(NULL));            // Randomize
 
