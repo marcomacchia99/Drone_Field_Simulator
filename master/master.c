@@ -19,12 +19,15 @@
 #define MAX_X 80     // max x value
 #define MAX_Y 40     // max y value
 
+// gui markers
 #define DRONE '*'
 #define EXPLORED '.'
 
+// drone status
 #define STATUS_IDLE 0
 #define STATUS_ACTIVE 1
 
+// drone message
 typedef struct drone_position_t
 {
     // timestamp of message
@@ -105,6 +108,7 @@ bool value_in_array(int array[], int size, int value);
                      : __val);                                                                                                         \
     })
 
+// handler for SIGTERM signal
 void close_program(int sig)
 {
     if (sig == SIGTERM)
@@ -125,6 +129,7 @@ void handle_resize(int sig)
     }
 }
 
+// function to check if a value is present in an array
 bool value_in_array(int array[], int size, int value)
 {
     for (int i = 0; i < size; i++)
@@ -135,6 +140,7 @@ bool value_in_array(int array[], int size, int value)
     return false;
 }
 
+// check if a new drone wants to connect to the socket
 void check_new_connection()
 {
     if (drones_no == MAX_DRONES)
@@ -166,8 +172,9 @@ void check_new_connection()
             // write on log file
             logtime = time(NULL);
             fprintf(logfile, "%.19s: drone %d connected\n", ctime(&logtime), drones_no + 1);
-
             fflush(logfile);
+
+            // update new drone status
             positions[drones_no].status = STATUS_ACTIVE;
             drones_no++;
         }
@@ -175,6 +182,7 @@ void check_new_connection()
     return;
 }
 
+// check if a required movement is safe
 bool check_safe_movement(int drone, drone_position request_position)
 {
     // check for map edges
@@ -187,7 +195,6 @@ bool check_safe_movement(int drone, drone_position request_position)
 
         return false;
     }
-
 
     // for every drone...
     for (int i = 0; i < drones_no; i++)
@@ -217,6 +224,7 @@ bool check_safe_movement(int drone, drone_position request_position)
     return true;
 }
 
+// check if there is a new movement request
 void check_move_request()
 {
     if (drones_no == 0)
@@ -275,6 +283,7 @@ void check_move_request()
                     }
                     else if (request_position.status == STATUS_ACTIVE)
                     {
+                        // it the drone was previousely idle, update status
                         if (positions[j].status == STATUS_IDLE)
                             positions[j].status = STATUS_ACTIVE;
 
@@ -310,6 +319,7 @@ void check_move_request()
     return;
 }
 
+// update map GUI
 void update_map()
 {
 
@@ -348,7 +358,7 @@ void update_map()
         else
             attron(COLOR_PAIR(1));
 
-        // print drone and label
+        // print drone and label (under or over the drone)
         mvaddch(positions[i].y + 1, positions[i].x + 2, DRONE);
         if (positions[i].y == 0)
         {
@@ -369,11 +379,12 @@ void update_map()
     // disable bold characters
     attroff(A_BOLD);
 
+    // print number of connected drones
     move(43, 0);
-
     printw("Drones connected:  %d\n", drones_no);
 
-    refresh(); // Send changes to the console.
+    // Send changes to the console.
+    refresh();
 
     return;
 }
@@ -395,7 +406,6 @@ void setup_colors()
 }
 
 // Function to initialize the console GUI.
-// The ncurses library is used.
 void init_console()
 {
 
@@ -443,9 +453,11 @@ void init_console()
     // disable bold characters
     attroff(A_BOLD);
 
+    // print number of connected drones
     printw("\nDrones connected:  %d", drones_no);
 
-    refresh(); // Send changes to the console.
+    // Send changes to the console.
+    refresh();
 }
 
 int main(int argc, char *argv[])
@@ -469,7 +481,7 @@ int main(int argc, char *argv[])
         return 0;
     }
 
-    // variable for logging event time
+    // write on log file
     logtime = time(NULL);
     fprintf(logfile, "\n%.19s: starting master\n", ctime(&logtime));
     fflush(logfile);
@@ -497,7 +509,6 @@ int main(int argc, char *argv[])
     // write on log file
     logtime = time(NULL);
     fprintf(logfile, "%.19s: socket created\n", ctime(&logtime));
-
     fflush(logfile);
 
     // set server address for connection
