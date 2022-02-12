@@ -10,7 +10,19 @@ done
 
 echo $PORT
 
-konsole -e "./master/master $PORT" &
+konsole -p 'TerminalColumns=44' -p 'TerminalRows=84' -e "./master/master $PORT" & 
+
+sleep 1
+
+konsole -e "./FE007_3_drone/drone $PORT" &
+
+sleep 1
+
+konsole -e "./FE007_3_drone/drone $PORT" &
+
+sleep 1
+
+konsole -e "./FE007_3_drone/drone $PORT" &
 
 sleep 1
 

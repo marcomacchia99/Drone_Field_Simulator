@@ -56,7 +56,7 @@ int explored_positions[MAX_X][MAX_Y] = {0};
 struct sockaddr_in server_addr, client_addr;
 
 // flag if the consumer received all the data
-int flag_terminate_process = 0;
+bool flag_terminate_process = 0;
 
 // variables for select function
 struct timeval td;
@@ -78,6 +78,7 @@ void check_move_request();
 void update_map();
 void setup_colors();
 void init_console();
+bool value_in_array(int array[], int size, int value);
 
 // // This function checks if something failed, exits the program and prints an error in the logfile
 // int check(int retval)
@@ -155,6 +156,16 @@ void handle_resize(int sig)
     }
 }
 
+bool value_in_array(int array[], int size, int value)
+{
+    for (int i = 0; i < size; i++)
+    {
+        if (array[i] == value)
+            return true;
+    }
+    return false;
+}
+
 void check_new_connection()
 {
     if (drones_no == MAX_DRONES)
@@ -223,7 +234,7 @@ int check_safe_movement(int drone, drone_position request_position)
                     {
                         // write on log file
                         logtime = time(NULL);
-                        fprintf(logfile, "%.19s: drone %d can't go in (%d,%d)\n", ctime(&logtime), drone, request_position.x, request_position.y);
+                        fprintf(logfile, "%.19s: drone %d can't go in (%d,%d)\n", ctime(&logtime), drone + 1, request_position.x, request_position.y);
                         fflush(logfile);
 
                         return 0;
@@ -256,15 +267,22 @@ void check_move_request()
         // take number of request
         int req_no = CHECK(select(FD_SETSIZE + 1, &dronesfds, NULL, NULL, &td));
 
+        // list of managed drone's request
+        int managed_request[req_no];
+
         // for every request
         for (int i = 0; i < req_no; i++)
         {
+
             // find the drone that has made the request
             for (int j = 0; j < drones_no; j++)
             {
-                // if this drone has made a request
-                if (FD_ISSET(fd_drones[j], &dronesfds))
+                // if this drone has made a request that is not already managed
+                if (FD_ISSET(fd_drones[j], &dronesfds) && !value_in_array(managed_request, i, j))
                 {
+                    // add to managed queue
+                    managed_request[i] = j;
+
                     // read requested position
                     drone_position request_position;
                     CHECK(read(fd_drones[j], &request_position, sizeof(request_position)));
@@ -278,7 +296,7 @@ void check_move_request()
 
                         // write on log file
                         logtime = time(NULL);
-                        fprintf(logfile, "%.19s: drone %d going idle\n", ctime(&logtime), j);
+                        fprintf(logfile, "%.19s: drone %d going idle\n", ctime(&logtime), j + 1);
                         fflush(logfile);
 
                         // update map
@@ -291,7 +309,7 @@ void check_move_request()
 
                         // write on log file
                         logtime = time(NULL);
-                        fprintf(logfile, "%.19s: drone %d requests position (%d,%d)\n", ctime(&logtime), j, request_position.x, request_position.y);
+                        fprintf(logfile, "%.19s: drone %d requests position (%d,%d)\n", ctime(&logtime), j + 1, request_position.x, request_position.y);
                         fflush(logfile);
 
                         // check if the movement is safe
@@ -312,8 +330,8 @@ void check_move_request()
                             // update map
                             update_map();
                         }
-                        break;
                     }
+                    break;
                 }
             }
         }
@@ -489,8 +507,8 @@ int main(int argc, char *argv[])
     CHECK(sigaction(SIGWINCH, &sa, NULL));
 
     // open log file in write mode
-    //  logfile = fopen("./../logs/master_log.txt", "a");
-    logfile = fopen("master_log.txt", "a");
+    //  logfile = fopen("./../logs/master_log.txt", "w");
+    logfile = fopen("master_log.txt", "w");
     if (logfile == NULL)
     {
         printf("an error occured while creating master's log File\n");
@@ -502,14 +520,12 @@ int main(int argc, char *argv[])
     fprintf(logfile, "\n%.19s: starting master\n", ctime(&logtime));
     fflush(logfile);
 
-    // //getting port number
-    // if (argc < 2)
-    // {
-    //     fprintf(stderr, "ERROR, no port provided\n");
-    //     exit(0);
-    // }
-    // portno = atoi(argv[1]);
-
+    // getting port number
+    if (argc < 2)
+    {
+        fprintf(stderr, "ERROR, no port provided\n");
+        exit(0);
+    }
     portno = atoi(argv[1]);
 
     // write on log file
