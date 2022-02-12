@@ -73,43 +73,12 @@ time_t logtime;
 int check(int retval);
 void close_program(int sig);
 void check_new_connection();
-int check_safe_movement(int drone, drone_position request_position);
+bool check_safe_movement(int drone, drone_position request_position);
 void check_move_request();
 void update_map();
 void setup_colors();
 void init_console();
 bool value_in_array(int array[], int size, int value);
-
-// // This function checks if something failed, exits the program and prints an error in the logfile
-// int check(int retval)
-// {
-//     if (retval == -1)
-//     {
-//         logtime = time(NULL);
-//         fprintf(logfile, "%.19s: ERROR (" __FILE__ ":%d) -- %s\n", ctime(&logtime), __LINE__, strerror(errno));
-//         fflush(logfile);
-//         if (errno == EINTR)
-//         {
-//             return retval;
-//         }
-//         fclose(logfile);
-//         if (errno == EADDRINUSE)
-//         {
-//             endwin();
-//             printf("\tError: address already in use. please change port\n");
-//             fflush(stdout);
-//             exit(-100);
-//         }
-//         else
-//         {
-//             endwin();
-//             printf("\tAn error has been reported on log file.\n");
-//             fflush(stdout);
-//             exit(-1);
-//         }
-//     }
-//     return retval;
-// }
 
 // This macro checks if something failed, exits the program and prints an error in the logfile
 #define CHECK(X) (                                                                                                                     \
@@ -206,7 +175,7 @@ void check_new_connection()
     return;
 }
 
-int check_safe_movement(int drone, drone_position request_position)
+bool check_safe_movement(int drone, drone_position request_position)
 {
     // check for map edges
     if (request_position.x < 0 || request_position.x > MAX_X || request_position.y < 0 || request_position.y > MAX_Y)
@@ -216,8 +185,10 @@ int check_safe_movement(int drone, drone_position request_position)
         fprintf(logfile, "%.19s: drone %d can't go in (%d,%d)\n", ctime(&logtime), drone, request_position.x, request_position.y);
         fflush(logfile);
 
-        return 0;
+        return false;
     }
+
+
     // for every drone...
     for (int i = 0; i < drones_no; i++)
     {
@@ -237,13 +208,13 @@ int check_safe_movement(int drone, drone_position request_position)
                         fprintf(logfile, "%.19s: drone %d can't go in (%d,%d)\n", ctime(&logtime), drone + 1, request_position.x, request_position.y);
                         fflush(logfile);
 
-                        return 0;
+                        return false;
                     }
                 }
             }
         }
     }
-    return 1;
+    return true;
 }
 
 void check_move_request()
@@ -313,7 +284,7 @@ void check_move_request()
                         fflush(logfile);
 
                         // check if the movement is safe
-                        int verdict = check_safe_movement(j, request_position);
+                        bool verdict = check_safe_movement(j, request_position);
                         // tell the drones if it can move
                         write(fd_drones[j], &verdict, sizeof(verdict));
 
@@ -421,17 +392,12 @@ void setup_colors()
     start_color();
     init_pair(1, COLOR_GREEN, COLOR_BLACK);
     init_pair(2, COLOR_BLUE, COLOR_BLACK);
-    init_pair(3, COLOR_BLACK, COLOR_BLACK);
-    init_pair(4, COLOR_WHITE, COLOR_BLACK);
 }
 
 // Function to initialize the console GUI.
 // The ncurses library is used.
 void init_console()
 {
-
-    // set console size
-    printf("\e[8;%d;%dt", MAX_Y + 4, MAX_X + 4);
 
     // init console
     initscr();
@@ -484,20 +450,8 @@ void init_console()
 
 int main(int argc, char *argv[])
 {
-    /////////////////////////////////////////////////////////////non serve in teoria
-    // // init array of drones position
-    // for (int i = 0; i < MAX_DRONES; i++)
-    // {
-    //     positions[i].timestamp = 0;
-    //     positions[i].status = -1;
-    //     positions[i].x = -1;
-    //     positions[i].y = -1;
-    // }
-
     // init console GUI
     init_console();
-
-    // signal(SIGWINCH, signal_handler);  //obsoleto e dà errore quando viene interrotta una syscall///////////////////////////////
 
     // handle terminal resize signal
     struct sigaction sa;
