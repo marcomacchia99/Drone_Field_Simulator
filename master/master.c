@@ -455,8 +455,8 @@ int main(int argc, char *argv[])
 
     // handle terminal resize signal
     struct sigaction sa;
+    memset(&sa, 0, sizeof(sa));
     sa.sa_handler = handle_resize;
-    sigemptyset(&sa.sa_mask);
     sa.sa_flags = SA_RESTART;
     CHECK(sigaction(SIGWINCH, &sa, NULL));
 
