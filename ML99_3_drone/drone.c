@@ -3,7 +3,7 @@
 
 #include "drone.h"
 
-int main(){
+int main(int argc, char * argv[]){
 
     // The following instrucion initializes the creation of random numbers which 
     // will be used by rand() in order to get new different random values each execution.
@@ -14,7 +14,7 @@ int main(){
     // address of the server and of the client.
 
     int sockfd;                            
-    int portno = 8080;                      
+    int portno = atoi(argv[1]);                      
     struct sockaddr_in serv_addr;     
 
     // Creates and writing PID on the logfile.
@@ -215,12 +215,12 @@ int main(){
 
         // Printing the current position and the one which the robot aims to.
 
-        attron(COLOR_PAIR(1));
+        attron(COLOR_PAIR(3));
         sprintf(str,"Actual position %d x %d y  ", actual_position.x, actual_position.y);
         mvaddstr(48, 0, str);
         sprintf(str,"Desired position %d x %d y  ", desired_position.x, desired_position.y);
         mvaddstr(49, 0, str);
-        attroff(COLOR_PAIR(1));
+        attroff(COLOR_PAIR(3));
         refresh();
 
         // Printing every cycle the matrix with all the values.

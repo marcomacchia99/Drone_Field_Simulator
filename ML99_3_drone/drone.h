@@ -241,16 +241,12 @@ void RechargingBattery(int sockfd)
         PRINT(3,actual_position.y + 2, actual_position.x +2 , 'X');
         PRINT(3,actual_position.y + 2, actual_position.x, 'X');
         refresh();
-
-
     }
     battery = MAX_CHARGE;
     LogPrint("Battery recharged!\n");
-
-    landed = actual_position;
-    landed.status = 1;
-    landed.timestamp = time(NULL);
-    CHECK(write(sockfd, &landed, sizeof(drone_position))); // dummy command for idle status
+    attron(COLOR_PAIR(1));
+    mvaddstr(44, 0, "Battery succesfully recharged!                ");
+    attroff(COLOR_PAIR(1));
 
     mvaddstr(43, 50, "               ");
     refresh();
