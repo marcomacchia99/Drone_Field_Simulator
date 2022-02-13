@@ -26,4 +26,8 @@ konsole -e "./ML99_3_drone/drone $PORT" &
 
 sleep 1
 
+gcc ./drone_ale_fab/drone.c -lm -lncurses -o drone
+
+mv drone ./drone_ale_fab
+
 konsole -e "./drone_ale_fab/drone $PORT" &
