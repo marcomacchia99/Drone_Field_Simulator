@@ -19,7 +19,7 @@ int main(int argc, char * argv[]){
 
     // Creates and writing PID on the logfile.
 
-    logfile = fopen("./src/ML99_3_drone/logfile.txt", "w");
+    logfile = fopen("./logfile.txt", "w");
     LogPrint("Creating the debug file, process starts.\n");
     sprintf(str, "The PID of the process is: %d \n", getpid());
     LogPrint(str);
@@ -144,6 +144,7 @@ int main(int argc, char * argv[]){
             attroff(COLOR_PAIR(2));
             refresh();
             LogPrint("Drone stopped, position not allowed.\n");
+            NewRandPosition();
         }
 
         // If we can move, then we procede with the movement and go on
@@ -222,10 +223,6 @@ int main(int argc, char * argv[]){
         mvaddstr(49, 0, str);
         attroff(COLOR_PAIR(3));
         refresh();
-
-        // Printing every cycle the matrix with all the values.
-
-        PrintGrid();
     }
 
     fclose(logfile);
