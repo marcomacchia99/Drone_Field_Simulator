@@ -476,6 +476,7 @@ int main(int argc, char *argv[])
     logfile = fopen("./src/dpm403_master/master_log.txt", "w");
     if (logfile == NULL)
     {
+        endwin();
         printf("an error occured while creating master's log File\n");
         return 0;
     }
