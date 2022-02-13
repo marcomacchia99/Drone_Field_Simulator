@@ -8,7 +8,8 @@ do
 	ss -lpn | grep -q ":$PORT " || break
 done
 
-echo $PORT
+echo "Port number $PORT selected" 
+#echo $PORT
 
 konsole -p 'TerminalColumns=44' -p 'TerminalRows=84' -e "./master/master $PORT" & 
 
