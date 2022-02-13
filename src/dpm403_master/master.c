@@ -1,4 +1,4 @@
-// compile with gcc master.c - lncurses - o master
+// compile with gcc master.c -lncurses -o master
 
 #define _GNU_SOURCE
 #include <errno.h>
@@ -473,8 +473,7 @@ int main(int argc, char *argv[])
     CHECK(sigaction(SIGWINCH, &sa, NULL));
 
     // open log file in write mode
-    //  logfile = fopen("./../logs/master_log.txt", "w");
-    logfile = fopen("./src/master/master_log.txt", "w");
+    logfile = fopen("./src/dpm403_master/master_log.txt", "w");
     if (logfile == NULL)
     {
         printf("an error occured while creating master's log File\n");
