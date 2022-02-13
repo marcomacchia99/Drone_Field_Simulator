@@ -67,7 +67,7 @@ echo "Begin sources' compilation ...";
 # The <pathname> directory will contain the src folder, the help.sh and run.sh bash scripts and a README.txt
 # All executables will be in their own respective directories in the src folder.
 
-gcc $1/src/master/master.c -lncurses -o $1/src/master/master;
+gcc $1/src/dpm403_master/master.c -lncurses -o $1/src/dpm403_master/master;
 gcc $1/src/FE007_3_drone/drone.c -lncurses -lm -o $1/src/FE007_3_drone/drone;
 gcc $1/src/drone_ale_fab/drone.c -lncurses -o $1/src/drone_ale_fab/drone;
 gcc $1/src/ML99_3_drone/drone.c -lncurses -lm -o $1/src/ML99_3_drone/drone;
