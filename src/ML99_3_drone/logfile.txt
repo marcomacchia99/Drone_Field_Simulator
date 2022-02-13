@@ -1,271 +1,201 @@
-Sun Feb 13 16:14:40: Log file successfully created.
-Sun Feb 13 16:14:40: Drone 007 PID is: 7773 
-Sun Feb 13 16:14:40: Connection successfully established.
-Sun Feb 13 16:14:40: Next X = 9, Next Y = 9
+Sun Feb 13 16:14:40: Creating the debug file, process starts.
+Sun Feb 13 16:14:40: The PID of the process is: 7778 
+Sun Feb 13 16:14:40: Connection succesfully established.
 Sun Feb 13 16:14:40: Data correctly written into the socket.
 Sun Feb 13 16:14:40: Feedback correctly read from master process. 
-Sun Feb 13 16:14:40: Position allowed, drone is moving.
-Sun Feb 13 16:14:40: Next X = 8, Next Y = 10
+Sun Feb 13 16:14:40: Drone stopped, position not allowed.
 Sun Feb 13 16:14:40: Data correctly written into the socket.
 Sun Feb 13 16:14:40: Feedback correctly read from master process. 
-Sun Feb 13 16:14:40: Position allowed, drone is moving.
-Sun Feb 13 16:14:41: Next X = 7, Next Y = 11
+Sun Feb 13 16:14:40: Drone stopped, position not allowed.
 Sun Feb 13 16:14:41: Data correctly written into the socket.
 Sun Feb 13 16:14:41: Feedback correctly read from master process. 
-Sun Feb 13 16:14:41: Position allowed, drone is moving.
-Sun Feb 13 16:14:41: Next X = 6, Next Y = 11
+Sun Feb 13 16:14:41: Position allowed, drone moving. 
 Sun Feb 13 16:14:41: Data correctly written into the socket.
 Sun Feb 13 16:14:41: Feedback correctly read from master process. 
-Sun Feb 13 16:14:41: Position allowed, drone is moving.
-Sun Feb 13 16:14:41: Next X = 5, Next Y = 11
+Sun Feb 13 16:14:41: Position allowed, drone moving. 
 Sun Feb 13 16:14:41: Data correctly written into the socket.
 Sun Feb 13 16:14:41: Feedback correctly read from master process. 
-Sun Feb 13 16:14:41: Position allowed, drone is moving.
-Sun Feb 13 16:14:41: Next X = 4, Next Y = 11
+Sun Feb 13 16:14:41: Position allowed, drone moving. 
 Sun Feb 13 16:14:41: Data correctly written into the socket.
 Sun Feb 13 16:14:41: Feedback correctly read from master process. 
-Sun Feb 13 16:14:41: Position allowed, drone is moving.
-Sun Feb 13 16:14:41: Next X = 3, Next Y = 11
+Sun Feb 13 16:14:41: Position allowed, drone moving. 
 Sun Feb 13 16:14:41: Data correctly written into the socket.
 Sun Feb 13 16:14:41: Feedback correctly read from master process. 
-Sun Feb 13 16:14:41: Position allowed, drone is moving.
-Sun Feb 13 16:14:41: Next X = 2, Next Y = 11
+Sun Feb 13 16:14:41: Position allowed, drone moving. 
 Sun Feb 13 16:14:41: Data correctly written into the socket.
 Sun Feb 13 16:14:41: Feedback correctly read from master process. 
-Sun Feb 13 16:14:41: Position allowed, drone is moving.
-Sun Feb 13 16:14:41: Next X = 1, Next Y = 12
+Sun Feb 13 16:14:41: Position allowed, drone moving. 
 Sun Feb 13 16:14:41: Data correctly written into the socket.
 Sun Feb 13 16:14:41: Feedback correctly read from master process. 
-Sun Feb 13 16:14:41: Position allowed, drone is moving.
-Sun Feb 13 16:14:41: Next X = 0, Next Y = 11
+Sun Feb 13 16:14:41: Position allowed, drone moving. 
 Sun Feb 13 16:14:41: Data correctly written into the socket.
 Sun Feb 13 16:14:41: Feedback correctly read from master process. 
-Sun Feb 13 16:14:41: Position allowed, drone is moving.
-Sun Feb 13 16:14:41: Next X = 1, Next Y = 11
+Sun Feb 13 16:14:41: Position allowed, drone moving. 
 Sun Feb 13 16:14:41: Data correctly written into the socket.
 Sun Feb 13 16:14:41: Feedback correctly read from master process. 
-Sun Feb 13 16:14:41: Position allowed, drone is moving.
-Sun Feb 13 16:14:41: Next X = 2, Next Y = 10
+Sun Feb 13 16:14:41: Position allowed, drone moving. 
 Sun Feb 13 16:14:41: Data correctly written into the socket.
 Sun Feb 13 16:14:41: Feedback correctly read from master process. 
-Sun Feb 13 16:14:41: Position allowed, drone is moving.
-Sun Feb 13 16:14:42: Next X = 3, Next Y = 9
+Sun Feb 13 16:14:41: Position allowed, drone moving. 
 Sun Feb 13 16:14:42: Data correctly written into the socket.
 Sun Feb 13 16:14:42: Feedback correctly read from master process. 
-Sun Feb 13 16:14:42: Position allowed, drone is moving.
-Sun Feb 13 16:14:42: Next X = 4, Next Y = 9
+Sun Feb 13 16:14:42: Position allowed, drone moving. 
 Sun Feb 13 16:14:42: Data correctly written into the socket.
 Sun Feb 13 16:14:42: Feedback correctly read from master process. 
-Sun Feb 13 16:14:42: Position allowed, drone is moving.
-Sun Feb 13 16:14:42: Next X = 5, Next Y = 9
+Sun Feb 13 16:14:42: Position allowed, drone moving. 
 Sun Feb 13 16:14:42: Data correctly written into the socket.
 Sun Feb 13 16:14:42: Feedback correctly read from master process. 
-Sun Feb 13 16:14:42: Position allowed, drone is moving.
-Sun Feb 13 16:14:42: Next X = 6, Next Y = 10
+Sun Feb 13 16:14:42: Position allowed, drone moving. 
 Sun Feb 13 16:14:42: Data correctly written into the socket.
 Sun Feb 13 16:14:42: Feedback correctly read from master process. 
-Sun Feb 13 16:14:42: Position allowed, drone is moving.
-Sun Feb 13 16:14:42: Next X = 7, Next Y = 9
+Sun Feb 13 16:14:42: Position allowed, drone moving. 
 Sun Feb 13 16:14:42: Data correctly written into the socket.
 Sun Feb 13 16:14:42: Feedback correctly read from master process. 
-Sun Feb 13 16:14:42: Position allowed, drone is moving.
-Sun Feb 13 16:14:42: Next X = 8, Next Y = 8
+Sun Feb 13 16:14:42: Position allowed, drone moving. 
 Sun Feb 13 16:14:42: Data correctly written into the socket.
 Sun Feb 13 16:14:42: Feedback correctly read from master process. 
-Sun Feb 13 16:14:42: Position allowed, drone is moving.
-Sun Feb 13 16:14:42: Next X = 9, Next Y = 8
+Sun Feb 13 16:14:42: Position allowed, drone moving. 
 Sun Feb 13 16:14:42: Data correctly written into the socket.
 Sun Feb 13 16:14:42: Feedback correctly read from master process. 
-Sun Feb 13 16:14:42: Position allowed, drone is moving.
-Sun Feb 13 16:14:42: Next X = 10, Next Y = 8
+Sun Feb 13 16:14:42: Position allowed, drone moving. 
 Sun Feb 13 16:14:42: Data correctly written into the socket.
 Sun Feb 13 16:14:42: Feedback correctly read from master process. 
-Sun Feb 13 16:14:42: Position allowed, drone is moving.
-Sun Feb 13 16:14:42: Next X = 11, Next Y = 9
+Sun Feb 13 16:14:42: Position allowed, drone moving. 
 Sun Feb 13 16:14:42: Data correctly written into the socket.
 Sun Feb 13 16:14:42: Feedback correctly read from master process. 
-Sun Feb 13 16:14:42: Position allowed, drone is moving.
-Sun Feb 13 16:14:42: Next X = 12, Next Y = 9
-Sun Feb 13 16:14:42: Data correctly written into the socket.
-Sun Feb 13 16:14:42: Feedback correctly read from master process. 
-Sun Feb 13 16:14:42: Position allowed, drone is moving.
-Sun Feb 13 16:14:43: Next X = 13, Next Y = 10
+Sun Feb 13 16:14:42: Position allowed, drone moving. 
 Sun Feb 13 16:14:43: Data correctly written into the socket.
 Sun Feb 13 16:14:43: Feedback correctly read from master process. 
-Sun Feb 13 16:14:43: Position allowed, drone is moving.
-Sun Feb 13 16:14:43: Next X = 14, Next Y = 9
+Sun Feb 13 16:14:43: Position allowed, drone moving. 
 Sun Feb 13 16:14:43: Data correctly written into the socket.
 Sun Feb 13 16:14:43: Feedback correctly read from master process. 
-Sun Feb 13 16:14:43: Position allowed, drone is moving.
-Sun Feb 13 16:14:43: Next X = 15, Next Y = 9
+Sun Feb 13 16:14:43: Position allowed, drone moving. 
 Sun Feb 13 16:14:43: Data correctly written into the socket.
 Sun Feb 13 16:14:43: Feedback correctly read from master process. 
-Sun Feb 13 16:14:43: Position allowed, drone is moving.
-Sun Feb 13 16:14:43: Next X = 16, Next Y = 10
+Sun Feb 13 16:14:43: Position allowed, drone moving. 
 Sun Feb 13 16:14:43: Data correctly written into the socket.
 Sun Feb 13 16:14:43: Feedback correctly read from master process. 
-Sun Feb 13 16:14:43: Position allowed, drone is moving.
-Sun Feb 13 16:14:43: Next X = 17, Next Y = 9
+Sun Feb 13 16:14:43: Position allowed, drone moving. 
 Sun Feb 13 16:14:43: Data correctly written into the socket.
 Sun Feb 13 16:14:43: Feedback correctly read from master process. 
-Sun Feb 13 16:14:43: Position allowed, drone is moving.
-Sun Feb 13 16:14:43: Next X = 18, Next Y = 8
+Sun Feb 13 16:14:43: Position allowed, drone moving. 
 Sun Feb 13 16:14:43: Data correctly written into the socket.
 Sun Feb 13 16:14:43: Feedback correctly read from master process. 
-Sun Feb 13 16:14:43: Position allowed, drone is moving.
-Sun Feb 13 16:14:43: Next X = 19, Next Y = 8
+Sun Feb 13 16:14:43: Position allowed, drone moving. 
 Sun Feb 13 16:14:43: Data correctly written into the socket.
 Sun Feb 13 16:14:43: Feedback correctly read from master process. 
-Sun Feb 13 16:14:43: Position allowed, drone is moving.
-Sun Feb 13 16:14:43: Next X = 20, Next Y = 8
+Sun Feb 13 16:14:43: Position allowed, drone moving. 
 Sun Feb 13 16:14:43: Data correctly written into the socket.
 Sun Feb 13 16:14:43: Feedback correctly read from master process. 
-Sun Feb 13 16:14:43: Position allowed, drone is moving.
-Sun Feb 13 16:14:43: Next X = 21, Next Y = 8
+Sun Feb 13 16:14:43: Position allowed, drone moving. 
 Sun Feb 13 16:14:43: Data correctly written into the socket.
 Sun Feb 13 16:14:43: Feedback correctly read from master process. 
-Sun Feb 13 16:14:43: Position allowed, drone is moving.
-Sun Feb 13 16:14:43: Next X = 22, Next Y = 8
+Sun Feb 13 16:14:43: Position allowed, drone moving. 
 Sun Feb 13 16:14:43: Data correctly written into the socket.
 Sun Feb 13 16:14:43: Feedback correctly read from master process. 
-Sun Feb 13 16:14:43: Position allowed, drone is moving.
-Sun Feb 13 16:14:44: Next X = 23, Next Y = 8
+Sun Feb 13 16:14:43: Position allowed, drone moving. 
 Sun Feb 13 16:14:44: Data correctly written into the socket.
 Sun Feb 13 16:14:44: Feedback correctly read from master process. 
-Sun Feb 13 16:14:44: Position allowed, drone is moving.
-Sun Feb 13 16:14:44: Next X = 24, Next Y = 8
+Sun Feb 13 16:14:44: Position allowed, drone moving. 
 Sun Feb 13 16:14:44: Data correctly written into the socket.
 Sun Feb 13 16:14:44: Feedback correctly read from master process. 
-Sun Feb 13 16:14:44: Position allowed, drone is moving.
-Sun Feb 13 16:14:44: Next X = 25, Next Y = 9
+Sun Feb 13 16:14:44: Position allowed, drone moving. 
 Sun Feb 13 16:14:44: Data correctly written into the socket.
 Sun Feb 13 16:14:44: Feedback correctly read from master process. 
-Sun Feb 13 16:14:44: Position allowed, drone is moving.
-Sun Feb 13 16:14:44: Next X = 26, Next Y = 9
+Sun Feb 13 16:14:44: Position allowed, drone moving. 
 Sun Feb 13 16:14:44: Data correctly written into the socket.
 Sun Feb 13 16:14:44: Feedback correctly read from master process. 
-Sun Feb 13 16:14:44: Position allowed, drone is moving.
-Sun Feb 13 16:14:44: Next X = 27, Next Y = 9
+Sun Feb 13 16:14:44: Position allowed, drone moving. 
 Sun Feb 13 16:14:44: Data correctly written into the socket.
 Sun Feb 13 16:14:44: Feedback correctly read from master process. 
-Sun Feb 13 16:14:44: Position allowed, drone is moving.
-Sun Feb 13 16:14:44: Next X = 28, Next Y = 9
+Sun Feb 13 16:14:44: Position allowed, drone moving. 
 Sun Feb 13 16:14:44: Data correctly written into the socket.
 Sun Feb 13 16:14:44: Feedback correctly read from master process. 
-Sun Feb 13 16:14:44: Position allowed, drone is moving.
-Sun Feb 13 16:14:44: Next X = 29, Next Y = 9
+Sun Feb 13 16:14:44: Position allowed, drone moving. 
 Sun Feb 13 16:14:44: Data correctly written into the socket.
 Sun Feb 13 16:14:44: Feedback correctly read from master process. 
-Sun Feb 13 16:14:44: Position allowed, drone is moving.
-Sun Feb 13 16:14:44: Next X = 30, Next Y = 10
+Sun Feb 13 16:14:44: Position allowed, drone moving. 
 Sun Feb 13 16:14:44: Data correctly written into the socket.
 Sun Feb 13 16:14:44: Feedback correctly read from master process. 
-Sun Feb 13 16:14:44: Position allowed, drone is moving.
-Sun Feb 13 16:14:44: Next X = 31, Next Y = 10
+Sun Feb 13 16:14:44: Position allowed, drone moving. 
 Sun Feb 13 16:14:44: Data correctly written into the socket.
 Sun Feb 13 16:14:44: Feedback correctly read from master process. 
-Sun Feb 13 16:14:44: Position allowed, drone is moving.
-Sun Feb 13 16:14:44: Next X = 32, Next Y = 10
+Sun Feb 13 16:14:44: Position allowed, drone moving. 
 Sun Feb 13 16:14:44: Data correctly written into the socket.
 Sun Feb 13 16:14:44: Feedback correctly read from master process. 
-Sun Feb 13 16:14:44: Position allowed, drone is moving.
-Sun Feb 13 16:14:45: Next X = 33, Next Y = 10
+Sun Feb 13 16:14:44: Position allowed, drone moving. 
 Sun Feb 13 16:14:45: Data correctly written into the socket.
 Sun Feb 13 16:14:45: Feedback correctly read from master process. 
-Sun Feb 13 16:14:45: Position allowed, drone is moving.
-Sun Feb 13 16:14:45: Next X = 34, Next Y = 11
+Sun Feb 13 16:14:45: Position allowed, drone moving. 
 Sun Feb 13 16:14:45: Data correctly written into the socket.
 Sun Feb 13 16:14:45: Feedback correctly read from master process. 
-Sun Feb 13 16:14:45: Position allowed, drone is moving.
-Sun Feb 13 16:14:45: Next X = 35, Next Y = 11
+Sun Feb 13 16:14:45: Position allowed, drone moving. 
 Sun Feb 13 16:14:45: Data correctly written into the socket.
 Sun Feb 13 16:14:45: Feedback correctly read from master process. 
-Sun Feb 13 16:14:45: Position allowed, drone is moving.
-Sun Feb 13 16:14:45: Next X = 36, Next Y = 11
+Sun Feb 13 16:14:45: Position allowed, drone moving. 
 Sun Feb 13 16:14:45: Data correctly written into the socket.
 Sun Feb 13 16:14:45: Feedback correctly read from master process. 
-Sun Feb 13 16:14:45: Position allowed, drone is moving.
-Sun Feb 13 16:14:45: Next X = 37, Next Y = 12
+Sun Feb 13 16:14:45: Position allowed, drone moving. 
 Sun Feb 13 16:14:45: Data correctly written into the socket.
 Sun Feb 13 16:14:45: Feedback correctly read from master process. 
-Sun Feb 13 16:14:45: Position allowed, drone is moving.
-Sun Feb 13 16:14:45: Next X = 38, Next Y = 12
+Sun Feb 13 16:14:45: Position allowed, drone moving. 
 Sun Feb 13 16:14:45: Data correctly written into the socket.
 Sun Feb 13 16:14:45: Feedback correctly read from master process. 
-Sun Feb 13 16:14:45: Position allowed, drone is moving.
-Sun Feb 13 16:14:45: Next X = 39, Next Y = 12
+Sun Feb 13 16:14:45: Position allowed, drone moving. 
 Sun Feb 13 16:14:45: Data correctly written into the socket.
 Sun Feb 13 16:14:45: Feedback correctly read from master process. 
-Sun Feb 13 16:14:45: Position allowed, drone is moving.
-Sun Feb 13 16:14:45: Next X = 40, Next Y = 12
+Sun Feb 13 16:14:45: Position allowed, drone moving. 
 Sun Feb 13 16:14:45: Data correctly written into the socket.
 Sun Feb 13 16:14:45: Feedback correctly read from master process. 
-Sun Feb 13 16:14:45: Position allowed, drone is moving.
-Sun Feb 13 16:14:45: Next X = 41, Next Y = 11
+Sun Feb 13 16:14:45: Position allowed, drone moving. 
 Sun Feb 13 16:14:45: Data correctly written into the socket.
 Sun Feb 13 16:14:45: Feedback correctly read from master process. 
-Sun Feb 13 16:14:45: Position allowed, drone is moving.
-Sun Feb 13 16:14:45: Next X = 42, Next Y = 11
+Sun Feb 13 16:14:45: Position allowed, drone moving. 
 Sun Feb 13 16:14:45: Data correctly written into the socket.
 Sun Feb 13 16:14:45: Feedback correctly read from master process. 
-Sun Feb 13 16:14:45: Position allowed, drone is moving.
-Sun Feb 13 16:14:46: Next X = 43, Next Y = 12
+Sun Feb 13 16:14:45: Position allowed, drone moving. 
 Sun Feb 13 16:14:46: Data correctly written into the socket.
 Sun Feb 13 16:14:46: Feedback correctly read from master process. 
-Sun Feb 13 16:14:46: Position allowed, drone is moving.
-Sun Feb 13 16:14:46: Next X = 44, Next Y = 11
+Sun Feb 13 16:14:46: Position allowed, drone moving. 
 Sun Feb 13 16:14:46: Data correctly written into the socket.
 Sun Feb 13 16:14:46: Feedback correctly read from master process. 
-Sun Feb 13 16:14:46: Position allowed, drone is moving.
-Sun Feb 13 16:14:46: Next X = 45, Next Y = 11
+Sun Feb 13 16:14:46: Position allowed, drone moving. 
 Sun Feb 13 16:14:46: Data correctly written into the socket.
 Sun Feb 13 16:14:46: Feedback correctly read from master process. 
-Sun Feb 13 16:14:46: Position allowed, drone is moving.
-Sun Feb 13 16:14:46: Next X = 46, Next Y = 11
+Sun Feb 13 16:14:46: Position allowed, drone moving. 
 Sun Feb 13 16:14:46: Data correctly written into the socket.
 Sun Feb 13 16:14:46: Feedback correctly read from master process. 
-Sun Feb 13 16:14:46: Position allowed, drone is moving.
-Sun Feb 13 16:14:46: Next X = 47, Next Y = 10
+Sun Feb 13 16:14:46: Position allowed, drone moving. 
 Sun Feb 13 16:14:46: Data correctly written into the socket.
 Sun Feb 13 16:14:46: Feedback correctly read from master process. 
-Sun Feb 13 16:14:46: Position allowed, drone is moving.
-Sun Feb 13 16:14:46: Next X = 48, Next Y = 10
+Sun Feb 13 16:14:46: Position allowed, drone moving. 
 Sun Feb 13 16:14:46: Data correctly written into the socket.
 Sun Feb 13 16:14:46: Feedback correctly read from master process. 
-Sun Feb 13 16:14:46: Position allowed, drone is moving.
-Sun Feb 13 16:14:46: Next X = 49, Next Y = 10
+Sun Feb 13 16:14:46: Position allowed, drone moving. 
 Sun Feb 13 16:14:46: Data correctly written into the socket.
 Sun Feb 13 16:14:46: Feedback correctly read from master process. 
-Sun Feb 13 16:14:46: Position allowed, drone is moving.
-Sun Feb 13 16:14:46: Next X = 50, Next Y = 10
+Sun Feb 13 16:14:46: Drone stopped, position not allowed.
 Sun Feb 13 16:14:46: Data correctly written into the socket.
 Sun Feb 13 16:14:46: Feedback correctly read from master process. 
-Sun Feb 13 16:14:46: Position allowed, drone is moving.
-Sun Feb 13 16:14:46: Next X = 51, Next Y = 10
+Sun Feb 13 16:14:46: Drone stopped, position not allowed.
 Sun Feb 13 16:14:46: Data correctly written into the socket.
 Sun Feb 13 16:14:46: Feedback correctly read from master process. 
-Sun Feb 13 16:14:46: Position allowed, drone is moving.
-Sun Feb 13 16:14:47: Next X = 52, Next Y = 10
+Sun Feb 13 16:14:46: Drone stopped, position not allowed.
 Sun Feb 13 16:14:47: Data correctly written into the socket.
 Sun Feb 13 16:14:47: Feedback correctly read from master process. 
-Sun Feb 13 16:14:47: Position allowed, drone is moving.
-Sun Feb 13 16:14:47: Next X = 53, Next Y = 11
+Sun Feb 13 16:14:47: Drone stopped, position not allowed.
 Sun Feb 13 16:14:47: Data correctly written into the socket.
 Sun Feb 13 16:14:47: Feedback correctly read from master process. 
-Sun Feb 13 16:14:47: Position allowed, drone is moving.
-Sun Feb 13 16:14:47: Next X = 54, Next Y = 12
+Sun Feb 13 16:14:47: Drone stopped, position not allowed.
 Sun Feb 13 16:14:47: Data correctly written into the socket.
 Sun Feb 13 16:14:47: Feedback correctly read from master process. 
-Sun Feb 13 16:14:47: Position allowed, drone is moving.
-Sun Feb 13 16:14:47: Next X = 55, Next Y = 12
+Sun Feb 13 16:14:47: Drone stopped, position not allowed.
 Sun Feb 13 16:14:47: Data correctly written into the socket.
 Sun Feb 13 16:14:47: Feedback correctly read from master process. 
-Sun Feb 13 16:14:47: Position allowed, drone is moving.
-Sun Feb 13 16:14:47: Next X = 56, Next Y = 13
+Sun Feb 13 16:14:47: Drone stopped, position not allowed.
 Sun Feb 13 16:14:47: Data correctly written into the socket.
 Sun Feb 13 16:14:47: Feedback correctly read from master process. 
-Sun Feb 13 16:14:47: Position allowed, drone is moving.
-Sun Feb 13 16:14:47: Next X = 57, Next Y = 13
+Sun Feb 13 16:14:47: Drone stopped, position not allowed.
 Sun Feb 13 16:14:47: Data correctly written into the socket.
 Sun Feb 13 16:14:47: Feedback correctly read from master process. 
-Sun Feb 13 16:14:47: Position allowed, drone is moving.
+Sun Feb 13 16:14:47: Drone stopped, position not allowed.

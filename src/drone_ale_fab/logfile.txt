@@ -1,0 +1,207 @@
+Sun Feb 13 16:14:40: Process created, PID: 7776 
+Sun Feb 13 16:14:40: New socket created
+Sun Feb 13 16:14:40: Succesful connection to the master process
+Sun Feb 13 16:14:40: Next position sent to the master
+Sun Feb 13 16:14:40: Feedback from master received
+Sun Feb 13 16:14:40: The response of the master is positive: the drone can move
+Sun Feb 13 16:14:40: Next position sent to the master
+Sun Feb 13 16:14:40: Feedback from master received
+Sun Feb 13 16:14:40: The response of the master is positive: the drone can move
+Sun Feb 13 16:14:40: Next position sent to the master
+Sun Feb 13 16:14:40: Feedback from master received
+Sun Feb 13 16:14:40: The response of the master is positive: the drone can move
+Sun Feb 13 16:14:41: Next position sent to the master
+Sun Feb 13 16:14:41: Feedback from master received
+Sun Feb 13 16:14:41: The response of the master is positive: the drone can move
+Sun Feb 13 16:14:41: Next position sent to the master
+Sun Feb 13 16:14:41: Feedback from master received
+Sun Feb 13 16:14:41: The response of the master is positive: the drone can move
+Sun Feb 13 16:14:41: Next position sent to the master
+Sun Feb 13 16:14:41: Feedback from master received
+Sun Feb 13 16:14:41: The response of the master is positive: the drone can move
+Sun Feb 13 16:14:41: Next position sent to the master
+Sun Feb 13 16:14:41: Feedback from master received
+Sun Feb 13 16:14:41: The response of the master is positive: the drone can move
+Sun Feb 13 16:14:41: Next position sent to the master
+Sun Feb 13 16:14:41: Feedback from master received
+Sun Feb 13 16:14:41: The response of the master is positive: the drone can move
+Sun Feb 13 16:14:41: Next position sent to the master
+Sun Feb 13 16:14:41: Feedback from master received
+Sun Feb 13 16:14:41: The response of the master is positive: the drone can move
+Sun Feb 13 16:14:41: Next position sent to the master
+Sun Feb 13 16:14:41: Feedback from master received
+Sun Feb 13 16:14:41: The response of the master is positive: the drone can move
+Sun Feb 13 16:14:41: Next position sent to the master
+Sun Feb 13 16:14:41: Feedback from master received
+Sun Feb 13 16:14:41: The response of the master is positive: the drone can move
+Sun Feb 13 16:14:41: Next position sent to the master
+Sun Feb 13 16:14:41: Feedback from master received
+Sun Feb 13 16:14:41: The response of the master is positive: the drone can move
+Sun Feb 13 16:14:41: Next position sent to the master
+Sun Feb 13 16:14:41: Feedback from master received
+Sun Feb 13 16:14:41: The response of the master is positive: the drone can move
+Sun Feb 13 16:14:42: Next position sent to the master
+Sun Feb 13 16:14:42: Feedback from master received
+Sun Feb 13 16:14:42: The response of the master is positive: the drone can move
+Sun Feb 13 16:14:42: Next position sent to the master
+Sun Feb 13 16:14:42: Feedback from master received
+Sun Feb 13 16:14:42: The response of the master is positive: the drone can move
+Sun Feb 13 16:14:42: Next position sent to the master
+Sun Feb 13 16:14:42: Feedback from master received
+Sun Feb 13 16:14:42: The response of the master is positive: the drone can move
+Sun Feb 13 16:14:42: Next position sent to the master
+Sun Feb 13 16:14:42: Feedback from master received
+Sun Feb 13 16:14:42: The response of the master is positive: the drone can move
+Sun Feb 13 16:14:42: Next position sent to the master
+Sun Feb 13 16:14:42: Feedback from master received
+Sun Feb 13 16:14:42: The response of the master is positive: the drone can move
+Sun Feb 13 16:14:42: Next position sent to the master
+Sun Feb 13 16:14:42: Feedback from master received
+Sun Feb 13 16:14:42: The response of the master is positive: the drone can move
+Sun Feb 13 16:14:42: Next position sent to the master
+Sun Feb 13 16:14:42: Feedback from master received
+Sun Feb 13 16:14:42: The response of the master is positive: the drone can move
+Sun Feb 13 16:14:42: Next position sent to the master
+Sun Feb 13 16:14:42: Feedback from master received
+Sun Feb 13 16:14:42: The response of the master is positive: the drone can move
+Sun Feb 13 16:14:42: Next position sent to the master
+Sun Feb 13 16:14:42: Feedback from master received
+Sun Feb 13 16:14:42: The response of the master is positive: the drone can move
+Sun Feb 13 16:14:42: Next position sent to the master
+Sun Feb 13 16:14:42: Feedback from master received
+Sun Feb 13 16:14:42: The response of the master is positive: the drone can move
+Sun Feb 13 16:14:43: Next position sent to the master
+Sun Feb 13 16:14:43: Feedback from master received
+Sun Feb 13 16:14:43: The response of the master is positive: the drone can move
+Sun Feb 13 16:14:43: Next position sent to the master
+Sun Feb 13 16:14:43: Feedback from master received
+Sun Feb 13 16:14:43: The response of the master is positive: the drone can move
+Sun Feb 13 16:14:43: Next position sent to the master
+Sun Feb 13 16:14:43: Feedback from master received
+Sun Feb 13 16:14:43: The response of the master is positive: the drone can move
+Sun Feb 13 16:14:43: Next position sent to the master
+Sun Feb 13 16:14:43: Feedback from master received
+Sun Feb 13 16:14:43: The response of the master is positive: the drone can move
+Sun Feb 13 16:14:43: Next position sent to the master
+Sun Feb 13 16:14:43: Feedback from master received
+Sun Feb 13 16:14:43: The response of the master is positive: the drone can move
+Sun Feb 13 16:14:43: Next position sent to the master
+Sun Feb 13 16:14:43: Feedback from master received
+Sun Feb 13 16:14:43: The response of the master is positive: the drone can move
+Sun Feb 13 16:14:43: Next position sent to the master
+Sun Feb 13 16:14:43: Feedback from master received
+Sun Feb 13 16:14:43: The response of the master is positive: the drone can move
+Sun Feb 13 16:14:43: Next position sent to the master
+Sun Feb 13 16:14:43: Feedback from master received
+Sun Feb 13 16:14:43: The response of the master is positive: the drone can move
+Sun Feb 13 16:14:43: Next position sent to the master
+Sun Feb 13 16:14:43: Feedback from master received
+Sun Feb 13 16:14:43: The response of the master is positive: the drone can move
+Sun Feb 13 16:14:43: Next position sent to the master
+Sun Feb 13 16:14:43: Feedback from master received
+Sun Feb 13 16:14:43: The response of the master is positive: the drone can move
+Sun Feb 13 16:14:44: Next position sent to the master
+Sun Feb 13 16:14:44: Feedback from master received
+Sun Feb 13 16:14:44: The response of the master is positive: the drone can move
+Sun Feb 13 16:14:44: Next position sent to the master
+Sun Feb 13 16:14:44: Feedback from master received
+Sun Feb 13 16:14:44: The response of the master is positive: the drone can move
+Sun Feb 13 16:14:44: Next position sent to the master
+Sun Feb 13 16:14:44: Feedback from master received
+Sun Feb 13 16:14:44: The response of the master is positive: the drone can move
+Sun Feb 13 16:14:44: Next position sent to the master
+Sun Feb 13 16:14:44: Feedback from master received
+Sun Feb 13 16:14:44: The response of the master is positive: the drone can move
+Sun Feb 13 16:14:44: Next position sent to the master
+Sun Feb 13 16:14:44: Feedback from master received
+Sun Feb 13 16:14:44: The response of the master is positive: the drone can move
+Sun Feb 13 16:14:44: Next position sent to the master
+Sun Feb 13 16:14:44: Feedback from master received
+Sun Feb 13 16:14:44: The response of the master is positive: the drone can move
+Sun Feb 13 16:14:44: Next position sent to the master
+Sun Feb 13 16:14:44: Feedback from master received
+Sun Feb 13 16:14:44: The response of the master is positive: the drone can move
+Sun Feb 13 16:14:44: Next position sent to the master
+Sun Feb 13 16:14:44: Feedback from master received
+Sun Feb 13 16:14:44: The response of the master is positive: the drone can move
+Sun Feb 13 16:14:44: Next position sent to the master
+Sun Feb 13 16:14:44: Feedback from master received
+Sun Feb 13 16:14:44: The response of the master is positive: the drone can move
+Sun Feb 13 16:14:44: Next position sent to the master
+Sun Feb 13 16:14:44: Feedback from master received
+Sun Feb 13 16:14:44: The response of the master is positive: the drone can move
+Sun Feb 13 16:14:45: Next position sent to the master
+Sun Feb 13 16:14:45: Feedback from master received
+Sun Feb 13 16:14:45: The response of the master is positive: the drone can move
+Sun Feb 13 16:14:45: Next position sent to the master
+Sun Feb 13 16:14:45: Feedback from master received
+Sun Feb 13 16:14:45: The response of the master is positive: the drone can move
+Sun Feb 13 16:14:45: Next position sent to the master
+Sun Feb 13 16:14:45: Feedback from master received
+Sun Feb 13 16:14:45: The response of the master is positive: the drone can move
+Sun Feb 13 16:14:45: Next position sent to the master
+Sun Feb 13 16:14:45: Feedback from master received
+Sun Feb 13 16:14:45: The response of the master is positive: the drone can move
+Sun Feb 13 16:14:45: Next position sent to the master
+Sun Feb 13 16:14:45: Feedback from master received
+Sun Feb 13 16:14:45: The response of the master is positive: the drone can move
+Sun Feb 13 16:14:45: Next position sent to the master
+Sun Feb 13 16:14:45: Feedback from master received
+Sun Feb 13 16:14:45: The response of the master is positive: the drone can move
+Sun Feb 13 16:14:45: Next position sent to the master
+Sun Feb 13 16:14:45: Feedback from master received
+Sun Feb 13 16:14:45: The response of the master is positive: the drone can move
+Sun Feb 13 16:14:45: Next position sent to the master
+Sun Feb 13 16:14:45: Feedback from master received
+Sun Feb 13 16:14:45: The response of the master is positive: the drone can move
+Sun Feb 13 16:14:45: Next position sent to the master
+Sun Feb 13 16:14:45: Feedback from master received
+Sun Feb 13 16:14:45: The response of the master is positive: the drone can move
+Sun Feb 13 16:14:45: Next position sent to the master
+Sun Feb 13 16:14:45: Feedback from master received
+Sun Feb 13 16:14:45: The response of the master is positive: the drone can move
+Sun Feb 13 16:14:46: Next position sent to the master
+Sun Feb 13 16:14:46: Feedback from master received
+Sun Feb 13 16:14:46: The response of the master is positive: the drone can move
+Sun Feb 13 16:14:46: Next position sent to the master
+Sun Feb 13 16:14:46: Feedback from master received
+Sun Feb 13 16:14:46: The response of the master is positive: the drone can move
+Sun Feb 13 16:14:46: Next position sent to the master
+Sun Feb 13 16:14:46: Feedback from master received
+Sun Feb 13 16:14:46: The response of the master is positive: the drone can move
+Sun Feb 13 16:14:46: Next position sent to the master
+Sun Feb 13 16:14:46: Feedback from master received
+Sun Feb 13 16:14:46: The response of the master is positive: the drone can move
+Sun Feb 13 16:14:46: Next position sent to the master
+Sun Feb 13 16:14:46: Feedback from master received
+Sun Feb 13 16:14:46: The response of the master is positive: the drone can move
+Sun Feb 13 16:14:46: Next position sent to the master
+Sun Feb 13 16:14:46: Feedback from master received
+Sun Feb 13 16:14:46: The response of the master is positive: the drone can move
+Sun Feb 13 16:14:46: Next position sent to the master
+Sun Feb 13 16:14:46: Feedback from master received
+Sun Feb 13 16:14:46: The response of the master is positive: the drone can move
+Sun Feb 13 16:14:46: Next position sent to the master
+Sun Feb 13 16:14:46: Feedback from master received
+Sun Feb 13 16:14:46: The response of the master is positive: the drone can move
+Sun Feb 13 16:14:46: Next position sent to the master
+Sun Feb 13 16:14:46: Feedback from master received
+Sun Feb 13 16:14:46: The response of the master is positive: the drone can move
+Sun Feb 13 16:14:47: Next position sent to the master
+Sun Feb 13 16:14:47: Feedback from master received
+Sun Feb 13 16:14:47: The response of the master is positive: the drone can move
+Sun Feb 13 16:14:47: Next position sent to the master
+Sun Feb 13 16:14:47: Feedback from master received
+Sun Feb 13 16:14:47: The response of the master is negative: the drone cannot move
+Sun Feb 13 16:14:47: Next position sent to the master
+Sun Feb 13 16:14:47: Feedback from master received
+Sun Feb 13 16:14:47: The response of the master is negative: the drone cannot move
+Sun Feb 13 16:14:47: Next position sent to the master
+Sun Feb 13 16:14:47: Feedback from master received
+Sun Feb 13 16:14:47: The response of the master is negative: the drone cannot move
+Sun Feb 13 16:14:47: Next position sent to the master
+Sun Feb 13 16:14:47: Feedback from master received
+Sun Feb 13 16:14:47: The response of the master is negative: the drone cannot move
+Sun Feb 13 16:14:47: Next position sent to the master
+Sun Feb 13 16:14:47: Feedback from master received
+Sun Feb 13 16:14:47: The response of the master is negative: the drone cannot move

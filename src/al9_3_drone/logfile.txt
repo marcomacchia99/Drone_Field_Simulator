@@ -1,0 +1,207 @@
+Sun Feb 13 16:14:40: al9 PID: 7772 
+Sun Feb 13 16:14:40: Socket created succesfully.
+Sun Feb 13 16:14:40: Connection to master process establihsed succesfully.
+Sun Feb 13 16:14:40: Next position sent to master in order to check it.
+Sun Feb 13 16:14:40: Feedback sent from master.
+Sun Feb 13 16:14:40: The drone is ABLE to move.
+Sun Feb 13 16:14:40: Next position sent to master in order to check it.
+Sun Feb 13 16:14:40: Feedback sent from master.
+Sun Feb 13 16:14:40: The drone is ABLE to move.
+Sun Feb 13 16:14:40: Next position sent to master in order to check it.
+Sun Feb 13 16:14:40: Feedback sent from master.
+Sun Feb 13 16:14:40: The drone is ABLE to move.
+Sun Feb 13 16:14:41: Next position sent to master in order to check it.
+Sun Feb 13 16:14:41: Feedback sent from master.
+Sun Feb 13 16:14:41: The drone is ABLE to move.
+Sun Feb 13 16:14:41: Next position sent to master in order to check it.
+Sun Feb 13 16:14:41: Feedback sent from master.
+Sun Feb 13 16:14:41: The drone is ABLE to move.
+Sun Feb 13 16:14:41: Next position sent to master in order to check it.
+Sun Feb 13 16:14:41: Feedback sent from master.
+Sun Feb 13 16:14:41: The drone is ABLE to move.
+Sun Feb 13 16:14:41: Next position sent to master in order to check it.
+Sun Feb 13 16:14:41: Feedback sent from master.
+Sun Feb 13 16:14:41: The drone is ABLE to move.
+Sun Feb 13 16:14:41: Next position sent to master in order to check it.
+Sun Feb 13 16:14:41: Feedback sent from master.
+Sun Feb 13 16:14:41: The drone is ABLE to move.
+Sun Feb 13 16:14:41: Next position sent to master in order to check it.
+Sun Feb 13 16:14:41: Feedback sent from master.
+Sun Feb 13 16:14:41: The drone is ABLE to move.
+Sun Feb 13 16:14:41: Next position sent to master in order to check it.
+Sun Feb 13 16:14:41: Feedback sent from master.
+Sun Feb 13 16:14:41: The drone is ABLE to move.
+Sun Feb 13 16:14:41: Next position sent to master in order to check it.
+Sun Feb 13 16:14:41: Feedback sent from master.
+Sun Feb 13 16:14:41: The drone is ABLE to move.
+Sun Feb 13 16:14:41: Next position sent to master in order to check it.
+Sun Feb 13 16:14:41: Feedback sent from master.
+Sun Feb 13 16:14:41: The drone is ABLE to move.
+Sun Feb 13 16:14:41: Next position sent to master in order to check it.
+Sun Feb 13 16:14:41: Feedback sent from master.
+Sun Feb 13 16:14:41: The drone is ABLE to move.
+Sun Feb 13 16:14:42: Next position sent to master in order to check it.
+Sun Feb 13 16:14:42: Feedback sent from master.
+Sun Feb 13 16:14:42: The drone is ABLE to move.
+Sun Feb 13 16:14:42: Next position sent to master in order to check it.
+Sun Feb 13 16:14:42: Feedback sent from master.
+Sun Feb 13 16:14:42: The drone is ABLE to move.
+Sun Feb 13 16:14:42: Next position sent to master in order to check it.
+Sun Feb 13 16:14:42: Feedback sent from master.
+Sun Feb 13 16:14:42: The drone is ABLE to move.
+Sun Feb 13 16:14:42: Next position sent to master in order to check it.
+Sun Feb 13 16:14:42: Feedback sent from master.
+Sun Feb 13 16:14:42: The drone is ABLE to move.
+Sun Feb 13 16:14:42: Next position sent to master in order to check it.
+Sun Feb 13 16:14:42: Feedback sent from master.
+Sun Feb 13 16:14:42: The drone is ABLE to move.
+Sun Feb 13 16:14:42: Next position sent to master in order to check it.
+Sun Feb 13 16:14:42: Feedback sent from master.
+Sun Feb 13 16:14:42: The drone is ABLE to move.
+Sun Feb 13 16:14:42: Next position sent to master in order to check it.
+Sun Feb 13 16:14:42: Feedback sent from master.
+Sun Feb 13 16:14:42: The drone is ABLE to move.
+Sun Feb 13 16:14:42: Next position sent to master in order to check it.
+Sun Feb 13 16:14:42: Feedback sent from master.
+Sun Feb 13 16:14:42: The drone is ABLE to move.
+Sun Feb 13 16:14:42: Next position sent to master in order to check it.
+Sun Feb 13 16:14:42: Feedback sent from master.
+Sun Feb 13 16:14:42: The drone is ABLE to move.
+Sun Feb 13 16:14:42: Next position sent to master in order to check it.
+Sun Feb 13 16:14:42: Feedback sent from master.
+Sun Feb 13 16:14:42: The drone is ABLE to move.
+Sun Feb 13 16:14:43: Next position sent to master in order to check it.
+Sun Feb 13 16:14:43: Feedback sent from master.
+Sun Feb 13 16:14:43: The drone is ABLE to move.
+Sun Feb 13 16:14:43: Next position sent to master in order to check it.
+Sun Feb 13 16:14:43: Feedback sent from master.
+Sun Feb 13 16:14:43: The drone is ABLE to move.
+Sun Feb 13 16:14:43: Next position sent to master in order to check it.
+Sun Feb 13 16:14:43: Feedback sent from master.
+Sun Feb 13 16:14:43: The drone is ABLE to move.
+Sun Feb 13 16:14:43: Next position sent to master in order to check it.
+Sun Feb 13 16:14:43: Feedback sent from master.
+Sun Feb 13 16:14:43: The drone is ABLE to move.
+Sun Feb 13 16:14:43: Next position sent to master in order to check it.
+Sun Feb 13 16:14:43: Feedback sent from master.
+Sun Feb 13 16:14:43: The drone is ABLE to move.
+Sun Feb 13 16:14:43: Next position sent to master in order to check it.
+Sun Feb 13 16:14:43: Feedback sent from master.
+Sun Feb 13 16:14:43: The drone is ABLE to move.
+Sun Feb 13 16:14:43: Next position sent to master in order to check it.
+Sun Feb 13 16:14:43: Feedback sent from master.
+Sun Feb 13 16:14:43: The drone is ABLE to move.
+Sun Feb 13 16:14:43: Next position sent to master in order to check it.
+Sun Feb 13 16:14:43: Feedback sent from master.
+Sun Feb 13 16:14:43: The drone is ABLE to move.
+Sun Feb 13 16:14:43: Next position sent to master in order to check it.
+Sun Feb 13 16:14:43: Feedback sent from master.
+Sun Feb 13 16:14:43: The drone is ABLE to move.
+Sun Feb 13 16:14:43: Next position sent to master in order to check it.
+Sun Feb 13 16:14:43: Feedback sent from master.
+Sun Feb 13 16:14:43: The drone is ABLE to move.
+Sun Feb 13 16:14:44: Next position sent to master in order to check it.
+Sun Feb 13 16:14:44: Feedback sent from master.
+Sun Feb 13 16:14:44: The drone is ABLE to move.
+Sun Feb 13 16:14:44: Next position sent to master in order to check it.
+Sun Feb 13 16:14:44: Feedback sent from master.
+Sun Feb 13 16:14:44: The drone is ABLE to move.
+Sun Feb 13 16:14:44: Next position sent to master in order to check it.
+Sun Feb 13 16:14:44: Feedback sent from master.
+Sun Feb 13 16:14:44: The drone is ABLE to move.
+Sun Feb 13 16:14:44: Next position sent to master in order to check it.
+Sun Feb 13 16:14:44: Feedback sent from master.
+Sun Feb 13 16:14:44: The drone is ABLE to move.
+Sun Feb 13 16:14:44: Next position sent to master in order to check it.
+Sun Feb 13 16:14:44: Feedback sent from master.
+Sun Feb 13 16:14:44: The drone is ABLE to move.
+Sun Feb 13 16:14:44: Next position sent to master in order to check it.
+Sun Feb 13 16:14:44: Feedback sent from master.
+Sun Feb 13 16:14:44: The drone is ABLE to move.
+Sun Feb 13 16:14:44: Next position sent to master in order to check it.
+Sun Feb 13 16:14:44: Feedback sent from master.
+Sun Feb 13 16:14:44: The drone is ABLE to move.
+Sun Feb 13 16:14:44: Next position sent to master in order to check it.
+Sun Feb 13 16:14:44: Feedback sent from master.
+Sun Feb 13 16:14:44: The drone is ABLE to move.
+Sun Feb 13 16:14:44: Next position sent to master in order to check it.
+Sun Feb 13 16:14:44: Feedback sent from master.
+Sun Feb 13 16:14:44: The drone is UNABLE to move.
+Sun Feb 13 16:14:44: Next position sent to master in order to check it.
+Sun Feb 13 16:14:44: Feedback sent from master.
+Sun Feb 13 16:14:44: The drone is UNABLE to move.
+Sun Feb 13 16:14:45: Next position sent to master in order to check it.
+Sun Feb 13 16:14:45: Feedback sent from master.
+Sun Feb 13 16:14:45: The drone is UNABLE to move.
+Sun Feb 13 16:14:45: Next position sent to master in order to check it.
+Sun Feb 13 16:14:45: Feedback sent from master.
+Sun Feb 13 16:14:45: The drone is UNABLE to move.
+Sun Feb 13 16:14:45: Next position sent to master in order to check it.
+Sun Feb 13 16:14:45: Feedback sent from master.
+Sun Feb 13 16:14:45: The drone is UNABLE to move.
+Sun Feb 13 16:14:45: Next position sent to master in order to check it.
+Sun Feb 13 16:14:45: Feedback sent from master.
+Sun Feb 13 16:14:45: The drone is UNABLE to move.
+Sun Feb 13 16:14:45: Next position sent to master in order to check it.
+Sun Feb 13 16:14:45: Feedback sent from master.
+Sun Feb 13 16:14:45: The drone is UNABLE to move.
+Sun Feb 13 16:14:45: Next position sent to master in order to check it.
+Sun Feb 13 16:14:45: Feedback sent from master.
+Sun Feb 13 16:14:45: The drone is UNABLE to move.
+Sun Feb 13 16:14:45: Next position sent to master in order to check it.
+Sun Feb 13 16:14:45: Feedback sent from master.
+Sun Feb 13 16:14:45: The drone is UNABLE to move.
+Sun Feb 13 16:14:45: Next position sent to master in order to check it.
+Sun Feb 13 16:14:45: Feedback sent from master.
+Sun Feb 13 16:14:45: The drone is UNABLE to move.
+Sun Feb 13 16:14:45: Next position sent to master in order to check it.
+Sun Feb 13 16:14:45: Feedback sent from master.
+Sun Feb 13 16:14:45: The drone is UNABLE to move.
+Sun Feb 13 16:14:45: Next position sent to master in order to check it.
+Sun Feb 13 16:14:45: Feedback sent from master.
+Sun Feb 13 16:14:45: The drone is UNABLE to move.
+Sun Feb 13 16:14:46: Next position sent to master in order to check it.
+Sun Feb 13 16:14:46: Feedback sent from master.
+Sun Feb 13 16:14:46: The drone is ABLE to move.
+Sun Feb 13 16:14:46: Next position sent to master in order to check it.
+Sun Feb 13 16:14:46: Feedback sent from master.
+Sun Feb 13 16:14:46: The drone is ABLE to move.
+Sun Feb 13 16:14:46: Next position sent to master in order to check it.
+Sun Feb 13 16:14:46: Feedback sent from master.
+Sun Feb 13 16:14:46: The drone is ABLE to move.
+Sun Feb 13 16:14:46: Next position sent to master in order to check it.
+Sun Feb 13 16:14:46: Feedback sent from master.
+Sun Feb 13 16:14:46: The drone is ABLE to move.
+Sun Feb 13 16:14:46: Next position sent to master in order to check it.
+Sun Feb 13 16:14:46: Feedback sent from master.
+Sun Feb 13 16:14:46: The drone is ABLE to move.
+Sun Feb 13 16:14:46: Next position sent to master in order to check it.
+Sun Feb 13 16:14:46: Feedback sent from master.
+Sun Feb 13 16:14:46: The drone is ABLE to move.
+Sun Feb 13 16:14:46: Next position sent to master in order to check it.
+Sun Feb 13 16:14:46: Feedback sent from master.
+Sun Feb 13 16:14:46: The drone is ABLE to move.
+Sun Feb 13 16:14:46: Next position sent to master in order to check it.
+Sun Feb 13 16:14:46: Feedback sent from master.
+Sun Feb 13 16:14:46: The drone is ABLE to move.
+Sun Feb 13 16:14:46: Next position sent to master in order to check it.
+Sun Feb 13 16:14:46: Feedback sent from master.
+Sun Feb 13 16:14:46: The drone is ABLE to move.
+Sun Feb 13 16:14:46: Next position sent to master in order to check it.
+Sun Feb 13 16:14:46: Feedback sent from master.
+Sun Feb 13 16:14:46: The drone is ABLE to move.
+Sun Feb 13 16:14:47: Next position sent to master in order to check it.
+Sun Feb 13 16:14:47: Feedback sent from master.
+Sun Feb 13 16:14:47: The drone is ABLE to move.
+Sun Feb 13 16:14:47: Next position sent to master in order to check it.
+Sun Feb 13 16:14:47: Feedback sent from master.
+Sun Feb 13 16:14:47: The drone is ABLE to move.
+Sun Feb 13 16:14:47: Next position sent to master in order to check it.
+Sun Feb 13 16:14:47: Feedback sent from master.
+Sun Feb 13 16:14:47: The drone is ABLE to move.
+Sun Feb 13 16:14:47: Next position sent to master in order to check it.
+Sun Feb 13 16:14:47: Feedback sent from master.
+Sun Feb 13 16:14:47: The drone is ABLE to move.
+Sun Feb 13 16:14:47: Next position sent to master in order to check it.
+Sun Feb 13 16:14:47: Feedback sent from master.
+Sun Feb 13 16:14:47: The drone is ABLE to move.
