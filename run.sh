@@ -23,3 +23,7 @@ konsole -e "./al9_3_drone/drone $PORT" &
 sleep 1
 
 konsole -e "./ML99_3_drone/drone $PORT" &
+
+sleep 1
+
+konsole -e "./drone_ale_fab/drone $PORT" &
