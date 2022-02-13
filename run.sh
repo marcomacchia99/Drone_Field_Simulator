@@ -10,7 +10,7 @@ done
 
 echo "Port number $PORT selected" 
 
-konsole -p 'TerminalColumns=44' -p 'TerminalRows=84' -e "./src/master/master $PORT" & 
+konsole -p 'TerminalColumns=44' -p 'TerminalRows=84' -e "./src/dpm403_master/master $PORT" & 
 
 sleep 1
 
