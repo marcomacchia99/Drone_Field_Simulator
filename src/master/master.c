@@ -474,7 +474,7 @@ int main(int argc, char *argv[])
 
     // open log file in write mode
     //  logfile = fopen("./../logs/master_log.txt", "w");
-    logfile = fopen("master_log.txt", "w");
+    logfile = fopen("./src/master/master_log.txt", "w");
     if (logfile == NULL)
     {
         printf("an error occured while creating master's log File\n");

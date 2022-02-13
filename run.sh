@@ -9,26 +9,12 @@ do
 done
 
 echo "Port number $PORT selected" 
-#echo $PORT
 
-konsole -p 'TerminalColumns=44' -p 'TerminalRows=84' -e "./master/master $PORT" & 
-
-sleep 1
-
-konsole -e "./FE007_3_drone/drone $PORT" &
+konsole -p 'TerminalColumns=44' -p 'TerminalRows=84' -e "./src/master/master $PORT" & 
 
 sleep 1
 
-konsole -e "./al9_3_drone/drone $PORT" &
-
-sleep 1
-
-konsole -e "./ML99_3_drone/drone $PORT" &
-
-sleep 1
-
-gcc ./drone_ale_fab/drone.c -lm -lncurses -o drone
-
-mv drone ./drone_ale_fab
-
-konsole -e "./drone_ale_fab/drone $PORT" &
+konsole -e "./src/FE007_3_drone/drone $PORT" &
+konsole -e "./src/al9_3_drone/drone $PORT" &
+konsole -e "./src/ML99_3_drone/drone $PORT" &
+konsole -e "./src/drone_ale_fab/drone $PORT" &
