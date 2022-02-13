@@ -10,11 +10,11 @@ done
 
 echo "Port number $PORT selected" 
 
-konsole -p 'TerminalColumns=44' -p 'TerminalRows=84' -e "./src/dpm403_master/master $PORT" & 
+konsole -p 'TerminalColumns=44' -p 'TerminalRows=84' -e "./src/dpm403_master/master $PORT" & echo "PID master        : $!"
 
 sleep 1
 
-konsole -e "./src/FE007_3_drone/drone $PORT" &
-konsole -e "./src/al9_3_drone/drone $PORT" &
-konsole -e "./src/ML99_3_drone/drone $PORT" &
-konsole -e "./src/drone_ale_fab/drone $PORT" &
+konsole -e "./src/FE007_3_drone/drone $PORT" & echo "PID drone FE007   : $!"
+konsole -e "./src/al9_3_drone/drone $PORT" & echo "PID drone al9     : $!"
+konsole -e "./src/ML99_3_drone/drone $PORT" & echo "PID drone ML99    : $!"
+konsole -e "./src/drone_ale_fab/drone $PORT" & echo "PID drone ale_fab : $!"
