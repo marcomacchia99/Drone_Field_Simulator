@@ -292,10 +292,13 @@ void change_direction() // randomly generate the number of steps and the directi
 		delta_pos.y = (rand() % 2) - (rand() % 2);
 
 		// if both the elementary steps are equal to the opposite of the respective previous ones, the drone would fly in same direction but backwards
-		// if any of these cases occur, recursively call the function to avoid them
-		if ((delta_pos.x == 0 && delta_pos.y == 0) || (delta_pos.x == -prevdelta_pos.x && delta_pos.y == -prevdelta_pos.y))
-			change_direction(); // if both the elementary steps are 0, the drone would stay still (which is not what we want)
-	}
+		//if both the elementary steps are 0 or are equal to the opposite previous ones, the drone would respectively stay still or get back to its steps (which is not what we want)
+		while ((delta_pos.x == 0 && delta_pos.y == 0) || (delta_pos.x == -prevdelta_pos.x && delta_pos.y == -prevdelta_pos.y)){
+			 
+		delta_pos.x = (rand() % 2) - (rand() % 2); 
+		delta_pos.y = (rand() % 2) - (rand() % 2);
+	
+	}}
 }
 
 void seek_free_pos()
