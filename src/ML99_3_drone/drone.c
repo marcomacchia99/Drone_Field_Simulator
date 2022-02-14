@@ -20,7 +20,7 @@ int main(int argc, char * argv[]){
 
     // Creates and writing PID on the logfile.
 
-    logfile = fopen("./src/ML99_3_drone/logfile.txt", "w");
+    logfile = fopen("logfile/log_drone_ML99.txt", "w");
     LogPrint("Creating the debug file, process starts.\n");
     sprintf(str, "The PID of the process is: %d \n", getpid());
     LogPrint(str);
