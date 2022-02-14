@@ -214,13 +214,7 @@ void setup_map()
 				mvaddch(i + 7, j, '0');
 				attroff(COLOR_PAIR(1));
 			}
-			// else
-			// {
-			// 	attron(COLOR_PAIR(2));
-			// 	mvaddch(i, j, '*');
-			// 	attroff(COLOR_PAIR(2));
-			// }
-		}
+					}
 	}
 	attron(A_BOLD);
 
@@ -228,14 +222,15 @@ void setup_map()
 	attron(COLOR_PAIR(4));
 	mvaddstr(49, 7, "MID");
 	attroff(COLOR_PAIR(4));
-	// attron(COLOR_PAIR(2));
+	 
 	mvaddstr(51, 0, "SPEED COMMANDS: ");
-	mvaddstr(52, 0, "[1] SLOW");
-	mvaddstr(53, 0, "[2] MID ");
-	mvaddstr(54, 0, "[3] HIGH");
-	mvaddstr(55, 0, "[4] INSANE");
-	mvaddstr(56, 0, "[5] ULTRA-INSANE");
-	//	attroff(COLOR_PAIR(2));
+	attron(COLOR_PAIR(4));
+	mvaddstr(52, 0, "[1] SLOW, ");
+	mvaddstr(52, 11, "[2] MID, ");
+	mvaddstr(52, 21, "[3] HIGH, ");
+	mvaddstr(52, 31, "[4] INSANE, ");
+	mvaddstr(52, 43, "[5] ULTRA-INSANE");
+		attroff(COLOR_PAIR(4));
 	attroff(A_BOLD);
 }
 
