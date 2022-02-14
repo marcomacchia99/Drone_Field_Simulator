@@ -61,7 +61,8 @@ drone_position prevdelta_pos;																									// previous unitary steps 
 int steps = 0;
 int dir_changer;
 int battery = 100; // battery initially fully charged
-int sockfd;				 // socket file descriptor
+int sockfd;
+bool isActive=true;				 // socket file descriptor
 
 // Update of the set of file descriptors for the select() function.
 fd_set rset;
@@ -130,7 +131,7 @@ int main(int argc, char *argv[])
 	setup_map();
 
 	int response = 0; // master's response (0:negative, 1:positive)
-	while (1)
+	while (isActive)
 	{
 
 		if (battery <= 0)
@@ -184,6 +185,7 @@ int main(int argc, char *argv[])
 		usleep(time_speed); // managing this we're able to modify the speed of the drone
 		battery--;
 	}
+	close(sockfd);
 	fclose(logfile); // close the logfile
 	return 0;
 }
@@ -236,7 +238,11 @@ void setup_map()
 	mvaddstr(52, 21, "[3] HIGH, ");
 	mvaddstr(52, 31, "[4] INSANE, ");
 	mvaddstr(52, 43, "[5] ULTRA-INSANE");
-		attroff(COLOR_PAIR(4));
+	attroff(COLOR_PAIR(4));
+	attron(COLOR_PAIR(5));
+	mvaddstr(53, 0, "PRESS [q] TO QUIT");
+	attroff(COLOR_PAIR(5));
+		
 	attroff(A_BOLD);
 }
 
@@ -277,7 +283,7 @@ void signal_handler(int sig)
 		setup_map(); // setup the map
 		refresh();	 // refresh the map
 	}
-}
+	}
 
 void print_logfile(char *str)
 { // function to print on logfile
@@ -509,6 +515,12 @@ void set_speed()
 				attroff(COLOR_PAIR(9));
 				time_speed = 2000;
 				print_logfile("Speed changed to: MORE INSANE\n");
+				break;
+			case 'q':
+				
+				isActive=false;
+				print_logfile("Drone quitted the simulation\n");
+				
 				break;
 			}
 			attroff(A_BOLD);
