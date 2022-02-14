@@ -1,3 +1,4 @@
+more -d ./../project_decription.txt
 more -d ./src/dpm403_master/description.txt
 more -d ./src/al9_3_drone/al9.txt
 more -d ./src/FE007_3_drone/README.txt
