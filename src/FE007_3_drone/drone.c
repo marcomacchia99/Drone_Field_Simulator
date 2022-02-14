@@ -32,6 +32,19 @@ void setup_colors();
 void setup_map();
 int change_velocity(int dt);
 
+/* GLOBAL VARIABLES */
+
+int command = 0;          // Command received.
+FILE *log_file;           // log file.
+int battery = MAX_CHARGE; // this variable takes into account the battry status
+bool map[40][80] = {};    // matrix that represent the maze. '1' stands for a visited position, '0' not visited.
+int step = 1;             // drone movement step
+bool direction = true;    // toggle for exploring direction
+char str[50];             // string buffer
+int dt = 100000;          // time step
+bool switch_off = false;  // bool for quitting the drone's application  
+
+
 void signal_handler(int sig)
 {
     /* Function to handle the SIGWINCH signal. The OS send this signal to the process when the size of
@@ -45,6 +58,9 @@ void signal_handler(int sig)
         clear();
         setup_map();
         refresh();
+    }
+    if (sig == SIGUSR1){
+        switch_off = true;
     }
 }
 
@@ -73,17 +89,6 @@ typedef struct drone_position_t
      })                                                                                 \
     : __val);                                                                                \
 })
-
-/* GLOBAL VARIABLES */
-
-int command = 0;          // Command received.
-FILE *log_file;           // log file.
-int battery = MAX_CHARGE; // this variable takes into account the battry status
-bool map[40][80] = {};    // matrix that represent the maze. '1' stands for a visited position, '0' not visited.
-int step = 1;             // drone movement step
-bool direction = true;    // toggle for exploring direction
-char str[50];             // string buffer
-int dt = 100000;          // time step
 
 drone_position next_position = {.status = STATUS_ACTIVE};                           // next drone position
 drone_position actual_position = {.status = STATUS_ACTIVE, .x = 10, .y = 10};       // actual drone position
@@ -314,7 +319,7 @@ int change_velocity(int dt){
         logPrint("Exit command received!");
         logPrint("Killing the process...");
         endwin();                   // terminates the GUI
-        kill(getpid(), SIGKILL);    // kill the process
+        kill(getpid(), SIGUSR1);    // kill the process
     }
 
     // return the new time sleep
@@ -344,6 +349,7 @@ int main(int argc, char * argv[])
 
     /* sigaction for SIGWINCH */
     CHECK(sigaction(SIGWINCH, &sa, NULL));
+    CHECK(sigaction(SIGUSR1, &sa, NULL));
 
     /* Opens socket */
     sockfd = CHECK(socket(AF_INET, SOCK_STREAM, 0)); // Creates a new socket.
@@ -367,7 +373,7 @@ int main(int argc, char * argv[])
     setup_map();
 
 
-    while (1)
+    while (switch_off == false)
     {
         if (battery == 0) // Low battery
             recharge(sockfd);
@@ -435,7 +441,8 @@ int main(int argc, char * argv[])
 
     } // End of the while cycle.
 
-    fclose(log_file); // Close log file.
+    close(sockfd);      // Close socket file descriptor
+    fclose(log_file);   // Close log file.
 
     return 0;
 }
