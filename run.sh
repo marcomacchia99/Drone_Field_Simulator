@@ -17,4 +17,4 @@ sleep 1
 konsole -e "./src/FE007_3_drone/drone $PORT" & echo "PID shell of drone FE007   : $!"
 konsole -e "./src/al9_3_drone/drone $PORT" & echo "PID shell of drone al9     : $!"
 konsole -e "./src/ML99_3_drone/drone $PORT" & echo "PID shell of drone ML99    : $!"
-konsole -e "./src/drone_ale_fab/drone $PORT" & echo "PID shell of drone ale_fab : $!"
+konsole -e "./src/FA00_3_drone/drone $PORT" & echo "PID shell of drone ale_fab : $!"

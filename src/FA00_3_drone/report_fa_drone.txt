@@ -1,16 +1,14 @@
 ############################ ASSIGNMENT INFOS #############################
+
 HOW TO RUN the project: 
 
-To run the project you should first execute the following shell command on the command window to give the right permission to the downloaded folder to be used:
+To run the project you should first launch the INSTALL shell script by running the following command on the command window:
 
-$ chmod +x <name_of_the_directory>
-
-Run the shell script to launch all the drones in the project:
-
+$ source ./install.sh <path_name>
 $ ./run.sh
 
 NOTE:
-If you ever close the shell you are launching the simulation from, you will not have to run the first command again before running the program. 
+If you ever close the shell you are launching the simulation from, remember to run the first command again before running the program with the following one. 
 
 
 SUMMARY: 

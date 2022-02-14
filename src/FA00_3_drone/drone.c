@@ -92,7 +92,7 @@ int main(int argc, char *argv[])
 	srand(time(NULL)); // setting the seed of rand() such as everytime the process starts it will generate a new pattern
 
 	// Open and write on the log file.
-	logfile = fopen("./src/drone_ale_fab/logfile.txt", "w");
+	logfile = fopen("./src/FA00_3_drone/logfile.txt", "w");
 	sprintf(buf, "Process created, PID: %d \n", getpid());
 	print_logfile(buf);
 
