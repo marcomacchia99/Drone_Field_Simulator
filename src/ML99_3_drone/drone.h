@@ -76,6 +76,8 @@ drone_position landed;
 int grid[ROW][COLUMN];
 char str[50];                   // string buffer
 
+int current_velocity = 50000;
+
 time_t current_time;
 
 // Function: CHECK(X).
@@ -160,6 +162,8 @@ void SetupColors() {
     init_pair(7,COLOR_WHITE, COLOR_BLACK);      // White on black.
     init_pair(8, COLOR_MAGENTA, COLOR_BLACK);   // Magenta on black.
     init_pair(9, COLOR_BLUE, COLOR_BLACK);      // Blue on black.
+    init_pair(10, COLOR_RED, COLOR_WHITE);      // Red on white.
+    init_pair(11, COLOR_YELLOW, COLOR_WHITE);   // Red on white.
 }
 
 // Implementing SetupMap() function, to create the map.
@@ -180,6 +184,18 @@ void SetupMap() {
 
         }
     }
+    attron(COLOR_PAIR(2));
+    mvaddstr(44, 53, "You can press 'e' to quit the drone!");
+    attroff(COLOR_PAIR(2));
+    PRINT(3, 0, 0, '-');
+    PRINT(3, 41, 0, '-');
+    PRINT(3, 0, 81, '-');
+    PRINT(3, 41, 81, '-');
+    attron(COLOR_PAIR(9));
+    mvaddstr(45, 0, "Hey bro, press 'i' to go faster. ;)");
+    mvaddstr(46, 0, "Dude, calm down, go slower, press 'k'!");
+    refresh();
+    attroff(COLOR_PAIR(9));
 }
 
 // Implementing loading_bar() function, to display graphically the battery of the drone.
@@ -224,22 +240,22 @@ void RechargingBattery(int sockfd)
 
     CHECK(write(sockfd, &landed, sizeof(drone_position)));
 
-    attron(COLOR_PAIR(1));
-    mvaddstr(43, 50, "Recharging...");
-    attroff(COLOR_PAIR(1));
+    attron(COLOR_PAIR(3));
+    mvaddstr(43, 53, "Recharging...");
+    attroff(COLOR_PAIR(3));
 
     refresh();
 
     for (int i = 1; i <= MAX_CHARGE; i++)
     {
         
-        usleep(50000);
+        usleep(30000);
         LoadingBattery(i, MAX_CHARGE); // graphical tool that represents a recharging bar
-        PRINT(3, actual_position.y+1, actual_position.x+1, 'R'); 
-        PRINT(3,actual_position.y , actual_position.x + 2, 'X');
-        PRINT(3,actual_position.y , actual_position.x , 'X');
-        PRINT(3,actual_position.y + 2, actual_position.x +2 , 'X');
-        PRINT(3,actual_position.y + 2, actual_position.x, 'X');
+        PRINT(11, actual_position.y+1, actual_position.x+1, 'R'); 
+        PRINT(11,actual_position.y , actual_position.x + 2, 'X');
+        PRINT(11,actual_position.y , actual_position.x , 'X');
+        PRINT(11,actual_position.y + 2, actual_position.x +2 , 'X');
+        PRINT(11,actual_position.y + 2, actual_position.x, 'X');
         refresh();
     }
     battery = MAX_CHARGE;
@@ -248,24 +264,52 @@ void RechargingBattery(int sockfd)
     mvaddstr(44, 0, "Battery succesfully recharged!                ");
     attroff(COLOR_PAIR(1));
 
-    mvaddstr(43, 50, "               ");
+    mvaddstr(43, 50, "                   ");
     refresh();
 }
 
-void PrintGrid(){
-    int number;
-    for (int i = 0; i < 40; i++)
-    {
-        for (int j = 0; j < 80; j++){
-                number = grid[i][j];
-                char charValue = number+'0';
-                if(charValue == '0'){
-                    PRINT(2, i+1, j + 85, '0');
-                }
-                else {
-                    PRINT(1, i+1, j + 85, '1');
-                }
-        }
+
+int increase_velocity(int current_velocity){
+  
+  char input;
+  struct timeval tv = {.tv_sec = 0, .tv_usec = 0};
+
+  fd_set rset;
+  FD_ZERO(&rset);
+  FD_SET(STDIN_FILENO, &rset);
+  int ret = CHECK(select(FD_SETSIZE, &rset, NULL, NULL, &tv));
+  fflush(stdout);
+
+  if (ret == -1){
+    perror("Select_Error!!");
+  }
+
+  if (FD_ISSET(STDIN_FILENO, &rset) != 0) { // There is something to read!
+        CHECK(read(STDIN_FILENO,&input,sizeof(char)));
     }
-    refresh();
+
+    if(input==105){
+      current_velocity = current_velocity/2;
+    }
+    else if(input==107){
+      current_velocity = current_velocity*2;
+    }
+    else if(input==101){
+      current_velocity=0;
+    }
+    else{
+      // wrong command 
+    }
+
+    if(current_velocity<=25000 && current_velocity!=0){
+        current_velocity=25000;
+        return current_velocity;
+    }
+
+    if(current_velocity>=200000){
+        current_velocity=200000;
+        return current_velocity;
+    }
+
+    return current_velocity;
 }

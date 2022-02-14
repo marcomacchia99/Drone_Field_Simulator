@@ -4,6 +4,7 @@
 #include "drone.h"
 
 int main(int argc, char * argv[]){
+    int level;
 
     // The following instrucion initializes the creation of random numbers which 
     // will be used by rand() in order to get new different random values each execution.
@@ -89,7 +90,7 @@ int main(int argc, char * argv[]){
     
     // Looping the program to start the task of the drone.
 
-    while (1){
+    while (current_velocity!=0){
 
         // If the battery is down, we have to recharge it so we land the drone
         // and start the recharging routine, when it's not recharging, we ref-
@@ -120,30 +121,24 @@ int main(int argc, char * argv[]){
 
         new_position.timestamp = time(NULL);
         CHECK(write(sockfd, &new_position, sizeof(drone_position)));
-
-        mvaddstr(45, 0, "Data correctly written into the socket");
-        refresh();
-        LogPrint("Data correctly written into the socket.\n");
+        LogPrint("Data correctly written to the socket client.\n");
 
         // Reads a feedback. The command is 0 if it's not allowed and
         // it is 1 if it is allowed.
         // Printing all infos to the logfile.
 
         CHECK(read(sockfd, &canmove, sizeof(int)));
-
-        mvaddstr(46, 0, "Feedback correctly read from master process");
-        refresh();
-        LogPrint("Feedback correctly read from master process. \n");
+        LogPrint("Feedback correctly read from the socket. \n");
 
         // If we cannot move, we stop and wait instructions from the master.
 
         if (canmove == 0)
         {
             attron(COLOR_PAIR(2));
-            mvaddstr(47, 0, "Drone stopped, position not allowed");
+            mvaddstr(47, 0, "Drone stopped, position not allowed!              ");
             attroff(COLOR_PAIR(2));
             refresh();
-            LogPrint("Drone stopped, position not allowed.\n");
+            LogPrint("Drone stopped, position not allowed, changing aim. \n");
             NewRandPosition();
         }
 
@@ -155,9 +150,9 @@ int main(int argc, char * argv[]){
 
             // Printing on console and on logfile.
 
-            attron(COLOR_PAIR(9));
-            mvaddstr(47, 0, "Position allowed! The drone is making its steps...   ");
-            attroff(COLOR_PAIR(9));
+            attron(COLOR_PAIR(3));
+            mvaddstr(47, 0, "Position allowed! The drone is making its steps...");
+            attroff(COLOR_PAIR(3));
             refresh();
             LogPrint("Position allowed, drone moving. \n");
 
@@ -196,11 +191,11 @@ int main(int argc, char * argv[]){
             actual_position = new_position;
             grid[actual_position.y][actual_position.x] = 1;
 
-            PRINT(7, actual_position.y + 1, actual_position.x + 1, '#');
-            PRINT(7, actual_position.y , actual_position.x + 2, 'X');
-            PRINT(7, actual_position.y , actual_position.x , 'X');
-            PRINT(7, actual_position.y + 2, actual_position.x +2 , 'X');
-            PRINT(7, actual_position.y + 2, actual_position.x, 'X');
+            PRINT(10, actual_position.y + 1, actual_position.x + 1, '#');
+            PRINT(10, actual_position.y , actual_position.x + 2, 'X');
+            PRINT(10, actual_position.y , actual_position.x , 'X');
+            PRINT(10, actual_position.y + 2, actual_position.x +2 , 'X');
+            PRINT(10, actual_position.y + 2, actual_position.x, 'X');
 
             refresh();
 
@@ -212,20 +207,33 @@ int main(int argc, char * argv[]){
 
         battery--;
         LoadingBattery(battery, MAX_CHARGE);
-        usleep(100000);
+        current_velocity = increase_velocity(current_velocity);
+        if (current_velocity == 200000) level = 1;
+        if (current_velocity == 100000) level = 2;
+        if (current_velocity == 50000) level = 3;
+        if (current_velocity == 25000) level = 4;
+        attron(COLOR_PAIR(2));
+        sprintf(str,"Your currenty velocity level is: %d!", level);
+
+        mvaddstr(45, 53, str);
+        attroff(COLOR_PAIR(2));
+
+        usleep(current_velocity);
 
         // Printing the current position and the one which the robot aims to.
 
         attron(COLOR_PAIR(3));
         sprintf(str,"Actual position %d x %d y  ", actual_position.x, actual_position.y);
-        mvaddstr(48, 0, str);
+        mvaddstr(46, 53, str);
         sprintf(str,"Desired position %d x %d y  ", desired_position.x, desired_position.y);
-        mvaddstr(49, 0, str);
+        mvaddstr(47, 53, str);
         attroff(COLOR_PAIR(3));
         refresh();
     }
 
-    fclose(logfile);
+    CHECK(fclose(logfile));
+
+    CHECK(close(sockfd));
 
     return 0;
 }
