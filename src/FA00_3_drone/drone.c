@@ -214,6 +214,12 @@ void setup_map()
 				mvaddch(i + 7, j, '0');
 				attroff(COLOR_PAIR(1));
 			}
+			else
+			{
+			attron(COLOR_PAIR(2)); // foreground and background colors are both set to green, so it will generate a totally green map
+				mvaddch(i + 7, j, '*');
+				attroff(COLOR_PAIR(2));
+			}
 					}
 	}
 	attron(A_BOLD);
@@ -255,7 +261,7 @@ void setup_colors()
 	init_pair(7, COLOR_YELLOW, COLOR_YELLOW);
 	init_pair(8, COLOR_WHITE, COLOR_RED);
 	init_pair(9, COLOR_YELLOW, COLOR_RED);
-	init_pair(9, COLOR_YELLOW, COLOR_YELLOW);
+	init_pair(10, COLOR_YELLOW, COLOR_YELLOW);
 }
 
 void signal_handler(int sig)
