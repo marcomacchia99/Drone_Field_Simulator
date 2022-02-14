@@ -21,7 +21,7 @@
 #define MAX_X 80 // Defining x max value as requested.
 #define MAX_Y 40 // Defining y max value as requested.
 
-// The CHECK(X) function is useful to write on shell whenever a system call returns an error.
+// The CHECK(X) function is usefull to write on shell whenever a system call return an error.
 // The function will print the name of the file and the line at which it found the error.
 // It will end the check exiting with code 1.
 
@@ -102,8 +102,8 @@ int main(int argc, char * argv[]){
     // The file is created if it does not exist.
 
     // Write on the logfile.
-    logfile = fopen("./src/al9_3_drone/logfile.txt", "w");
-    sprintf(buffer, "al9 PID: %d \n", getpid());
+    logfile = fopen("./logfile.txt", "w");
+    sprintf(buffer, "PID: %d \n", getpid());
     logfilePrint(buffer); // Print on the logfile the PID.
    
     // Signals that the process can receive.
@@ -149,7 +149,7 @@ int main(int argc, char * argv[]){
             direction = !direction;
         }
 
-        if(cicli == random){ // To change the exploration direction after a random number of loop between 0 and 20.
+        if(cicli == random){ // To change the exploration direction after a random number of loop beetwen 0 and 20.
             direction = !direction;
             cicli = 0;
             random = rand() % 20;
@@ -261,12 +261,11 @@ void signal_handler(int sig){
         // If the size of the terminal changes, clear and restart the grafic interface
 
         endwin(); // clear the graphic interface
-	initscr(); // To initialize the console used for the interface.
-	refresh();
-	clear();
-	colors(); // To setup the colors.
-	environment_setup(); // To setup the environment in which the drone moves.
-
+        initscr(); // To initialize the console used for the interface.
+        refresh();
+        clear();
+        colors(); // To setup the colors.
+        environment_setup(); // To setup the environment in which the drone moves.
     }
 }
 
@@ -342,6 +341,41 @@ void next_position(){
             supposed_next.x = round(current_pos.x+randfrom(-abs(step), abs(step)));
         }
     }
+    
+    // then we have to manage cases in which the drone reaches environment boundaries
+
+    if(supposed_next.x < 0){ // left boundary
+
+        // If the next x position is lower than 0 we reach the left boundary
+
+        step = -step; // change step direction
+        supposed_next.x = 0; // so since we can't move on the left we keep the robot in the x 0 position.
+    }
+
+    else if(supposed_next.x > MAX_X - 1){ // right boundary
+
+        // We keep the drone in the x MAX_X - 1 position.
+        // If the next x position is higher than MAX_X - 1 we reach the right boundary
+
+        step = -step; // change step direction
+        supposed_next.x = MAX_X - 1; // so since we can't move on the right we keep the robot in the x MAX_X - 1 position.
+    }
+
+    if(supposed_next.y < 0){ // upper boundary
+
+        // if the next y position is lower than 0 we reach the upper boundary.
+
+        supposed_next.y = 0; // So since we can't move up we keep the robot in the y 0 position
+        step = -step; 
+    }
+
+    else if(supposed_next.y > MAX_Y - 1){ // lower boundary
+
+        // if the next y position is higher than MAX_Y - 1 we reach the lower boundary.
+
+        supposed_next.y = MAX_Y - 1; // So since we can't move on the right we keep the robot in the y MAX_Y - 1 position
+        step = -step; 
+    }
 
     if(instruction == 0){ // if the instruction received from the master is 0 the drone can't moves,
                           // so we try to change the step direction and the exploration direction
@@ -354,40 +388,6 @@ void next_position(){
         next_pos = supposed_next;
     }
 
-    // then we have to manage cases in which the drone reaches environment boundaries
-
-    if(next_pos.x < 0){ // left boundary
-
-        // If the next x position is lower than 0 we reach the left boundary
-
-        step = -step; // change step direction
-        next_pos.x = 0; // so since we can't move on the left we keep the robot in the x 0 position.
-    }
-
-    if(next_pos.x > MAX_X - 1){ // right boundary
-
-        // We keep the drone in the x MAX_X - 1 position.
-        // If the next x position is higher than MAX_X - 1 we reach the right boundary
-
-        step = -step; // change step direction
-        next_pos.x = MAX_X - 1; // so since we can't move on the right we keep the robot in the x MAX_X - 1 position.
-    }
-
-    if(next_pos.y < 0){ // upper boundary
-
-        // if the next y position is lower than 0 we reach the upper boundary.
-
-        next_pos.y = 0; // So since we can't move up we keep the robot in the y 0 position
-        step = -step; 
-    }
-
-    if(next_pos.y > MAX_Y - 1){ // lower boundary
-
-        // if the next y position is higher than MAX_Y - 1 we reach the lower boundary.
-
-        next_pos.y = MAX_Y - 1; // So since we can't move on the right we keep the robot in the y MAX_Y - 1 position
-        step = -step; 
-    }
 }
 
 
@@ -406,22 +406,24 @@ void recharge(int fd){
     next_pos.timestamp = time(NULL);
     next_pos.status = 0; // Setting the idle status since the drone is recharging
     CHECK(write(fd, &next_pos, sizeof(drone_position)));  
-	
-    
-    for(int i=0; i< 50; i++){ // for loop for loading bar
-     
-	    attron(COLOR_PAIR(2));
-	    mvaddstr(41, 0, "                                      ");
-	    mvaddstr(42, 0, "Charging in progres...");
-	    mvaddch(43, i, '*'); // add char x at y = 43 and x = i to print the loading bar
-	    attroff(COLOR_PAIR(2));
-	    refresh();
-	    usleep(100000);
+
+
+    for(int i=1; i< 51; i++){ // for loop for loading bar 
+    attron(COLOR_PAIR(2));
+    mvaddstr(41, 0, "                                      ");
+    mvaddstr(42, 0, "Charging in progres...");
+    mvaddch(43, 0, '[');
+    mvaddch(43, 51, ']');
+    mvaddch(43, i, '*'); // add char x at y = 43 and x = i to print the loading bar
+    attroff(COLOR_PAIR(2));
+    refresh();
+    usleep(100000);
     }
+     // Wait for six seconds to simulate the battery recharging.
 
     attron(COLOR_PAIR(2));
     mvaddstr(42, 0, "Charge completed.     ");
-    mvaddstr(43, 0, "                                                  ");
+    mvaddstr(43, 0, "                                                    ");
     attroff(COLOR_PAIR(2));
     refresh();
 
@@ -436,3 +438,4 @@ void recharge(int fd){
     attroff(COLOR_PAIR(2));
     refresh();
 }
+
