@@ -69,7 +69,7 @@ echo "Begin sources' compilation ...";
 
 gcc $1/src/dpm403_master/master.c -lncurses -o $1/src/dpm403_master/master;
 gcc $1/src/FE007_3_drone/drone.c -lncurses -lm -o $1/src/FE007_3_drone/drone;
-gcc $1/src/FA00_3_drone/drone.c -lncurses -o $1/src/drone_ale_fab/drone;
+gcc $1/src/FA00_3_drone/drone.c -lncurses -lm -o $1/src/FA00_3_drone/drone;
 gcc $1/src/ML99_3_drone/drone.c -lncurses -lm -o $1/src/ML99_3_drone/drone;
 gcc $1/src/al9_3_drone/drone.c -lncurses -lm -o $1/src/al9_3_drone/drone;
 
