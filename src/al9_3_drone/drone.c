@@ -102,7 +102,7 @@ int main(int argc, char * argv[]){
     // The file is created if it does not exist.
 
     // Write on the logfile.
-    logfile = fopen("./logfile.txt", "w");
+    logfile = fopen("logfile/log_drone_al9.txt", "w");
     sprintf(buffer, "PID: %d \n", getpid());
     logfilePrint(buffer); // Print on the logfile the PID.
    
