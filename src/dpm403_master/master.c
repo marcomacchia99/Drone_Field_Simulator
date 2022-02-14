@@ -473,7 +473,7 @@ int main(int argc, char *argv[])
     CHECK(sigaction(SIGWINCH, &sa, NULL));
 
     // open log file in write mode
-    logfile = fopen("./src/dpm403_master/master_log.txt", "w");
+    logfile = fopen("logfile/log_master_dpm403.txt", "w");
     if (logfile == NULL)
     {
         endwin();
