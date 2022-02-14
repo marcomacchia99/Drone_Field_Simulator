@@ -40,6 +40,8 @@ GUI INTERFACE:
 	-[4] to switch to the INSANE speed mod.
 	-[5] to switch to the ULTRA INSANE speed mod.
 
+-4- Button [q] to close the socket and the program itself  
+
 We took care of all the graphical components through the use of the ncurses.h libraries.
 
 
