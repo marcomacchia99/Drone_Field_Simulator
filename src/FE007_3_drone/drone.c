@@ -336,7 +336,7 @@ int main(int argc, char * argv[])
     srand(time(NULL));            // Randomize
 
     /* Open and write on the log file. */
-    log_file = fopen("./src/FE007_3_drone/log_file.txt", "w");           
+    log_file = fopen("logfile/log_drone_FE007.txt", "w");           
     logPrint("Log file successfully created.\n");
     sprintf(str, "Drone 007 PID is: %d \n", getpid());
     logPrint(str);
