@@ -72,4 +72,4 @@ gcc $1/src/FA00_3_drone/drone.c -lncurses -lm -o $1/src/FA00_3_drone/drone;
 gcc $1/src/ML99_3_drone/drone.c -lncurses -lm -o $1/src/ML99_3_drone/drone;
 gcc $1/src/al9_3_drone/drone.c -lncurses -lm -o $1/src/al9_3_drone/drone;
 
-# echo "You can run the program in $1 with ./run.sh ";
+echo "You can run the program in $1 with ./run.sh ";
